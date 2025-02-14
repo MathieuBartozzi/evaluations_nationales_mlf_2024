@@ -130,7 +130,7 @@ competences_matiere = {
     "Calculer mentalement": "Maths",
     "Nommer, lire, écrire, représenter des nombres": "Maths",
     "Calculer": "Maths",
-    "Comprendre et ordonner des nombres entiers": "Maths",
+    "Ordonner des nombres": "Maths",
     "Calculer avec des nombres entiers": "Maths",
     "Résolution de problème : résoudre des problèmes en utilisant des nombres, des données et des grandeurs": "Maths",
     "Espaces et géométrie": "Maths",
@@ -184,9 +184,7 @@ moyenne_francais = calculer_moyenne_par_matiere(dataframes, competences_matiere,
 moyennes_etablissements = {"Primaire": {}, "Secondaire": {}, "Générale": {}}
 etablissements=pd.DataFrame()
 
-# 📌 Définition des niveaux
-niveaux_primaire = ["cp", "ce1", "ce2", "cm1", "cm2"]
-niveaux_secondaire = ["6e", "4e", "2nde"]
+
 
 # 📌 Calcul des moyennes pour chaque niveau
 for matiere in ["Maths", "Français"]:
@@ -216,7 +214,7 @@ for categorie in ["Primaire", "Secondaire", "Générale"]:
     moyennes_etablissements[categorie]["Français"] = moyennes_etablissements[categorie]["Français"].rename(f"Moyenne Français {categorie}").to_frame()
 
 # 📌 Fusion des moyennes avec le DataFrame des établissements
-etablissements = pd.DataFrame(dataframes["ce1"][["Nom d'établissement", "Ville", "Pays"]].drop_duplicates())
+etablissements = pd.DataFrame(dataframes["geo"][["Nom d'établissement", "Ville", "Pays"]].drop_duplicates())
 
 for categorie in ["Primaire", "Secondaire", "Générale"]:
     etablissements = etablissements.merge(moyennes_etablissements[categorie]["Maths"], on="Nom d'établissement", how="left")
@@ -233,29 +231,111 @@ etablissements["Moyenne Maths/Français Générale"] = (etablissements["Moyenne 
 etablissements["Moyenne Maths/Français Primaire"] = (etablissements["Moyenne Maths Primaire"] + etablissements["Moyenne Français Primaire"]) / 2
 etablissements["Moyenne Maths/Français Secondaire"] = (etablissements["Moyenne Maths Secondaire"] + etablissements["Moyenne Français Secondaire"]) / 2
 
-def carte_etablissements(etablissements, niveau,titre):
+# def carte_etablissements(etablissements, niveau,titre):
+#     """
+#     Génère une carte interactive des établissements scolaires en fonction d'une moyenne choisie (Primaire, Secondaire, ou Générale),
+#     en filtrant ceux qui n'ont pas de données pour le niveau sélectionné.
+
+#     :param etablissements: DataFrame contenant les établissements et leurs coordonnées.
+#     :param niveau: "Générale", "Primaire" ou "Secondaire" pour choisir la moyenne affichée.
+#     :param titre: Titre de la carte.
+#     :return: Figure Plotly.
+#     """
+
+#     # Sélection de la colonne correspondante et filtrage des établissements
+#     if niveau == "Générale":
+#         colonne_moyenne = "Moyenne Maths/Français Générale"
+#         df_filtre = etablissements  # Conserver tous les établissements
+#     elif niveau == "Primaire":
+#         colonne_moyenne = "Moyenne Maths/Français Primaire"
+#         df_filtre = etablissements.dropna(subset=[colonne_moyenne])  # Supprime les établissements sans résultats en primaire
+#     elif niveau == "Secondaire":
+#         colonne_moyenne = "Moyenne Maths/Français Secondaire"
+#         df_filtre = etablissements.dropna(subset=[colonne_moyenne])  # Supprime les établissements sans résultats en secondaire
+#     else:
+#         raise ValueError("Le niveau doit être 'Générale', 'Primaire' ou 'Secondaire'.")
+
+#     # Création de la carte avec les établissements filtrés
+#     fig = px.scatter_map(
+#         df_filtre,
+#         lat="Latitude",
+#         lon="Longitude",
+#         hover_name="Nom d'établissement",
+#         hover_data={
+#             "Ville": True,
+#             colonne_moyenne: True,
+#             "Latitude": False,
+#             "Longitude": False
+#         },
+#         color=colonne_moyenne,  # Dégradé de couleur basé sur la moyenne sélectionnée
+#         zoom=0.5,  # Zoom initial
+#         height=700,
+#         color_continuous_scale="RdYlGn",  # Dégradé de rouge (faible) à vert (fort)
+#     )
+
+#     # Fixer la taille des points et l'opacité
+#     fig.update_traces(marker=dict(size=20, opacity=0.7))
+
+#     # Mise en page et affichage
+#     fig.update_layout(
+#         map_style="open-street-map",
+#         margin={"r": 0, "t": 0, "l": 0, "b": 0},
+#         coloraxis_colorbar=dict(title=None)  # Ajout de la barre de couleur
+#     )
+
+#     fig.update_layout(
+#         height=350
+#         )
+
+#     return fig
+
+def jitter_coordinates(df, lat_col="Latitude", lon_col="Longitude", jitter=0.1):
+    """
+    Ajoute un léger bruit aléatoire aux coordonnées latitude/longitude
+    pour éviter la superposition des points.
+
+    :param df: DataFrame contenant les établissements
+    :param lat_col: Nom de la colonne de latitude
+    :param lon_col: Nom de la colonne de longitude
+    :param jitter: Amplitude du bruit aléatoire ajouté
+    :return: DataFrame avec coordonnées ajustées si nécessaire
+    """
+    coords_count = df.groupby([lat_col, lon_col])[lat_col].transform('count')
+    mask = coords_count > 1
+
+    df.loc[mask, lat_col] += np.random.uniform(-jitter, jitter, size=mask.sum())
+    df.loc[mask, lon_col] += np.random.uniform(-jitter, jitter, size=mask.sum())
+
+    return df
+
+def carte_etablissements(etablissements, niveau, titre, jitter=0.1):
     """
     Génère une carte interactive des établissements scolaires en fonction d'une moyenne choisie (Primaire, Secondaire, ou Générale),
-    en filtrant ceux qui n'ont pas de données pour le niveau sélectionné.
+    en filtrant ceux qui n'ont pas de données pour le niveau sélectionné et en ajustant les coordonnées si nécessaire.
 
     :param etablissements: DataFrame contenant les établissements et leurs coordonnées.
     :param niveau: "Générale", "Primaire" ou "Secondaire" pour choisir la moyenne affichée.
     :param titre: Titre de la carte.
+    :param jitter: Amplitude du bruit aléatoire pour éviter la superposition des points (0 pour désactiver).
     :return: Figure Plotly.
     """
-
     # Sélection de la colonne correspondante et filtrage des établissements
     if niveau == "Générale":
         colonne_moyenne = "Moyenne Maths/Français Générale"
-        df_filtre = etablissements  # Conserver tous les établissements
+        df_filtre = etablissements.copy()
     elif niveau == "Primaire":
         colonne_moyenne = "Moyenne Maths/Français Primaire"
-        df_filtre = etablissements.dropna(subset=[colonne_moyenne])  # Supprime les établissements sans résultats en primaire
+        df_filtre = etablissements.dropna(subset=[colonne_moyenne]).copy()
+
     elif niveau == "Secondaire":
         colonne_moyenne = "Moyenne Maths/Français Secondaire"
-        df_filtre = etablissements.dropna(subset=[colonne_moyenne])  # Supprime les établissements sans résultats en secondaire
+        df_filtre = etablissements.dropna(subset=[colonne_moyenne]).copy()
     else:
         raise ValueError("Le niveau doit être 'Générale', 'Primaire' ou 'Secondaire'.")
+
+    # Appliquer le jitter si nécessaire
+    if jitter > 0:
+        df_filtre = jitter_coordinates(df_filtre, jitter=jitter)
 
     # Création de la carte avec les établissements filtrés
     fig = px.scatter_map(
@@ -270,24 +350,20 @@ def carte_etablissements(etablissements, niveau,titre):
             "Longitude": False
         },
         color=colonne_moyenne,  # Dégradé de couleur basé sur la moyenne sélectionnée
-        zoom=0.5,  # Zoom initial
-        height=700,
+        zoom=1,  # Zoom initial
+        height=350,
         color_continuous_scale="RdYlGn",  # Dégradé de rouge (faible) à vert (fort)
     )
 
     # Fixer la taille des points et l'opacité
-    fig.update_traces(marker=dict(size=20, opacity=0.7))
+    fig.update_traces(marker=dict(size=15, opacity=0.7))
 
     # Mise en page et affichage
     fig.update_layout(
         map_style="open-street-map",
         margin={"r": 0, "t": 0, "l": 0, "b": 0},
-        coloraxis_colorbar=dict(title=None)  # Ajout de la barre de couleur
+        coloraxis_colorbar=dict(title="Moyenne")  # Ajout de la barre de couleur
     )
-
-    fig.update_layout(
-        height=350
-        )
 
     return fig
 
@@ -345,6 +421,7 @@ def creer_scatter_maths_francais(dataframes):
         xaxis_title="Moyenne Maths (%)",
         yaxis_title="Moyenne Français (%)",
         template="plotly_white",
+        height=400
     )
 
     return fig
@@ -427,11 +504,19 @@ def creer_boxplot_combine(dataframes):
 
     # Mise en forme
     fig.update_layout(
-        title="Dispersion des scores en Maths et Français par niveau",
         xaxis_title="",
         yaxis_title="Résultats (%)",
-        legend_title_text="",
-        template="plotly_white"
+        #legend_title_text="",
+        template="plotly_white",
+        height=400,
+        legend=dict(
+        x=1.05,  # Déplace la légende à droite du graphique
+        y=0.5,   # Place la légende à mi-hauteur
+        xanchor="left",  # S'assure que la légende est alignée à gauche de x=1.05
+        yanchor="middle",  # Centre verticalement la légende
+        orientation="v"  # Garde la légende verticale
+    ),
+        yaxis=dict(range=[0, 130])
     )
 
     return fig
@@ -486,10 +571,10 @@ def evolution_moyenne_globale_par_niveau(dataframes, competences_matiere):
         y="Moyenne",
         markers=True,
         color="Matière",
-        title="Évolution globale",
         color_discrete_sequence=px.colors.qualitative.G10
     )
     fig.update_layout(
+        title='Evolution globale',
         height=400,
         legend_title_text="",
         legend=dict(
@@ -537,7 +622,7 @@ competences_maths_primaire = {
         "Comparer des nombres": {"cp": True, "ce1": False, "ce2": False, "cm1": False, "cm2": False},
         "Placer un nombre sur une ligne numérique": {"cp": True, "ce1": True, "ce2": False, "cm1": False, "cm2": False},
         "Reconnaitre des nombres": {"cp": False, "ce1": True, "ce2": False, "cm1": False, "cm2": False},
-        "Comprendre et ordonner des nombres entiers": {"cp": False, "ce1": False, "ce2": True, "cm1": False, "cm2": False},
+        "Ordonner des nombres": {"cp": False, "ce1": False, "ce2": True, "cm1": False, "cm2": False},
         "Nommer, lire, écrire, représenter des nombres": {"cp": False, "ce1": False, "ce2": True, "cm1": True, "cm2": True}
     },
     "Calcul et opérations": {
@@ -548,13 +633,78 @@ competences_maths_primaire = {
     }
 }
 
+competences_fr_secondaire = {
+    "Comprendre un texte": {
+        "Lire et comprendre un texte":{"6e": True, "4e":True, "2nde": True},
+        "Comprendre et s'exprimer à l'oral : comprendre un message oral":{"6e": True, "4e":True, "2nde": True}},
+        "Orthographier": {"Comprendre le fonctionnement de la langue : maîtriser l'orthographe":{"6e": True, "4e":True, "2nde": True}},
+    "Reconnaître les éléments du langage": {
+        "Comprendre le fonctionnement de la langue : Se repérer dans une phrase et identifier sa composition":{"6e": True, "4e":True, "2nde": True},
+        "Comprendre le fonctionnement de la langue : Comprendre et mobiliser le lexique": {"6e": True, "4e":True, "2nde": True}},
+}
+
+competences_maths_secondaire = {
+    "Résolution et modélisation": {
+        "Résolution de problème : résoudre des problèmes en utilisant des nombres, des données et des grandeurs": {"6e": True, "4e":True, "2nde": False},
+        "Calcul littéral : Utiliser des expressions littérales pour traduire ou résoudre des problèmes": {"6e": False, "4e":False, "2nde": True},
+        "Connaître et utiliser des données et la notion de fonction": {"6e": False, "4e":True, "2nde": True}
+    },
+    "Procédures et calculs": {
+        "Automatismes : Mobiliser directement des procédures et des connaissances": {"6e": True, "4e":True, "2nde": True},
+        "Nombres et calcul : connaître les nombres et les utiliser dans les calculs": {"6e": True, "4e":True, "2nde": True},
+    },
+    "Espace et mesures": {
+        "Espaces et géométrie : connaître et utiliser des notions de géométrie": {"6e": True, "4e":True, "2nde": True},
+        "Grandeurs et mesures : Connaître des grandeurs et utiliser des mesures": {"6e": False, "4e":False, "2nde": True},
+    },
+}
 
 
 
+
+#### FOCNTIONNE ###
+# # Fonction pour calculer la moyenne par compétence principale
+# def calculer_moyenne_par_competence_principale(dataframes, competences_par_niveau):
+
+#     niveaux = ["cp", "ce1", "ce2", "cm1", "cm2",'6e','4e','2nde']
+#     moyenne_globale = {"Niveau": [], "Compétence": [], "Moyenne": []}
+
+#     for competence_generale, sous_competences in competences_par_niveau.items():
+#         for niveau in niveaux:
+#             if niveau in dataframes:
+#                 df = dataframes[niveau]
+#                 # Sélection des colonnes correspondant aux sous-compétences
+#                 cols = [col for col in sous_competences if col in df.columns and sous_competences[col][niveau]]
+#                 if cols:
+#                     moyenne = df[cols].mean().mean()
+#                     st.write(f"📌 Moyenne calculée pour {niveau.upper()} - {competence_generale} : {moyenne}")# Moyenne des sous-compétences disponibles
+#                     if not np.isnan(moyenne):
+#                         moyenne_globale["Niveau"].append(niveau.upper())
+#                         moyenne_globale["Compétence"].append(competence_generale)
+#                         moyenne_globale["Moyenne"].append(moyenne)
+#                     else:
+#                         st.write(f"⚠️ La moyenne est NaN pour {niveau.upper()} - {competence_generale}, il n'y a peut-être pas de valeurs numériques.")
+#             else:
+#                 st.write(f"⚠️ Attention : Données absentes pour le niveau **{niveau.upper()}**")
+
+#     df_result = pd.DataFrame(moyenne_globale)
+#     if df_result.empty:
+#         st.write("⚠️ **Aucune donnée calculée, vérifiez vos fichiers sources !**")
+
+
+#     # ✅ Assurer que les niveaux sont bien ordonnés
+#     # Appliquer l'ordre des niveaux
+#     niveau_ordre = ["CP", "CE1", "CE2", "CM1", "CM2"]
+#     df_result["Niveau"] = pd.Categorical(df_result["Niveau"], categories=niveau_ordre, ordered=True)
+#     df_result.sort_values("Niveau", inplace=True)
+
+#     return df_result
 
 # Fonction pour calculer la moyenne par compétence principale
-def calculer_moyenne_par_competence_principale(dataframes, competences_par_niveau):
-    niveaux = ["cp", "ce1", "ce2", "cm1", "cm2"]
+def calculer_moyenne_par_competence_principale(dataframes, competences_par_niveau, niveaux):
+    """
+    Calcule la moyenne pour chaque compétence principale en parcourant les niveaux.
+    """
     moyenne_globale = {"Niveau": [], "Compétence": [], "Moyenne": []}
 
     for competence_generale, sous_competences in competences_par_niveau.items():
@@ -563,35 +713,40 @@ def calculer_moyenne_par_competence_principale(dataframes, competences_par_nivea
                 df = dataframes[niveau]
 
                 # Sélection des colonnes correspondant aux sous-compétences
-                cols = [col for col in sous_competences if col in df.columns and sous_competences[col][niveau]]
+                cols = [col for col in sous_competences if col in df.columns and sous_competences[col].get(niveau, False)]
+
                 if cols:
-                    moyenne = df[cols].mean().mean()  # Moyenne des sous-compétences disponibles
+                    moyenne = df[cols].mean().mean()  # Moyenne de toutes les sous-compétences disponibles
+
                     if not np.isnan(moyenne):
-                        moyenne_globale["Niveau"].append(niveau.upper())
+                        moyenne_globale["Niveau"].append(niveau.upper())  # ✅ Correction de .upper
                         moyenne_globale["Compétence"].append(competence_generale)
                         moyenne_globale["Moyenne"].append(moyenne)
-            else:
-                print(f"⚠️ Attention : Données absentes pour le niveau {niveau.upper()}")
+
+
 
     df_result = pd.DataFrame(moyenne_globale)
 
-    # ✅ Assurer que les niveaux sont bien ordonnés
-    # Appliquer l'ordre des niveaux
-    niveau_ordre = ["CP", "CE1", "CE2", "CM1", "CM2"]
-    df_result["Niveau"] = pd.Categorical(df_result["Niveau"], categories=niveau_ordre, ordered=True)
+    if df_result.empty:
+        st.write("⚠️ **Aucune donnée calculée, vérifiez vos fichiers sources !**")
+        return df_result
+
+    # ✅ Assurer que les niveaux sont bien ordonnés (primaire et secondaire)
+    ordre_niveaux = ["CP", "CE1", "CE2", "CM1", "CM2", "6E", "4E", "2NDE"]
+    df_result["Niveau"] = pd.Categorical(df_result["Niveau"], categories=ordre_niveaux, ordered=True)
     df_result.sort_values("Niveau", inplace=True)
 
     return df_result
 
+
 # Fonction pour afficher un seul graphique avec toutes les compétences
-def creer_graphique_evolution_global(df_moyenne_globale, titre):
+def creer_graphique_evolution_global(df_moyenne_globale):
     fig = px.line(
         df_moyenne_globale,
         x="Niveau",
         y="Moyenne",
         color="Compétence",
         markers=True,
-        title=titre,
     )
     fig.update_layout(
         legend_title_text="",
@@ -609,9 +764,23 @@ def creer_graphique_evolution_global(df_moyenne_globale, titre):
 
 
 
-# Exécution des calculs et affichage des graphiques
-df_moyenne_globale_fr_primaire = calculer_moyenne_par_competence_principale(dataframes, competences_fr_primaire)
-df_moyenne_globale_maths_primaire = calculer_moyenne_par_competence_principale(dataframes, competences_maths_primaire)
+# # Exécution des calculs et affichage des graphiques
+# df_moyenne_globale_fr_primaire = calculer_moyenne_par_competence_principale(dataframes, competences_fr_primaire)
+# df_moyenne_globale_maths_primaire = calculer_moyenne_par_competence_principale(dataframes, competences_maths_primaire)
+# df_moyenne_globale_maths_secondaire = calculer_moyenne_par_competence_principale(dataframes, competences_maths_secondaire)
+# df_moyenne_globale_fr_secondaire = calculer_moyenne_par_competence_principale(dataframes, competences_fr_secondaire)
+
+niveaux_primaire = ["cp", "ce1", "ce2", "cm1", "cm2"]
+niveaux_secondaire = ["6e", "4e", "2nde"]
+
+# Calcul des moyennes pour le PRIMAIRE
+df_moyenne_globale_fr_primaire = calculer_moyenne_par_competence_principale(dataframes, competences_fr_primaire, niveaux_primaire)
+df_moyenne_globale_maths_primaire = calculer_moyenne_par_competence_principale(dataframes, competences_maths_primaire, niveaux_primaire)
+
+# Calcul des moyennes pour le SECONDAIRE
+df_moyenne_globale_fr_secondaire = calculer_moyenne_par_competence_principale(dataframes, competences_fr_secondaire, niveaux_secondaire)
+df_moyenne_globale_maths_secondaire = calculer_moyenne_par_competence_principale(dataframes, competences_maths_secondaire, niveaux_secondaire)
+
 
 
 
@@ -628,19 +797,16 @@ with tab1:
     b.metric(label="Moyenne en Français", value=f"{moyenne_francais:.2f}%",border=True)
 
 
-    # st.subheader('Primaire / Secondaire : moyenne et répartition géographique des résultats')
-
+    st.markdown('**Primaire / Secondaire : moyenne et répartition géographique des résultats**')
     col1, col2=st.columns([1,2])
 
     with col1:
-
-
-
         # Génération et Affichagedu graphique
         st.plotly_chart(creer_bar_chart_maths_francais(moyenne_maths_primaire,moyenne_francais_primaire,moyenne_maths_secondaire,moyenne_francais_secondaire))
 
     with col2 :
         tab1, tab2= st.tabs(["Primaire", 'Secondaire'])
+        etablissements=jitter_coordinates(etablissements,jitter=0.001)
         tab1.plotly_chart(carte_etablissements(etablissements, 'Primaire', titre='Primaire'))
         tab2.plotly_chart(carte_etablissements(etablissements, 'Secondaire', titre='Secondaire'))
 
@@ -658,6 +824,7 @@ with tab1:
         #         - La taille des bulles indique l'écart entre les deux moyennes : une grande bulle signifie une différence marquée entre les notes en mathématiques et en français, tandis qu'une petite bulle indique un équilibre entre les deux matières.
         #         """)
 
+st.markdown("**Dispersion par niveaux et corrélation maths/français**")
 col1,col2=st.columns(2)
 
 with col1:
@@ -671,13 +838,23 @@ with col2 :
 
 
 
+# st.markdown("**Evolution global, par matiere et degré**")
+
 col1, col2, col3=st.columns(3)
 
-col1.plotly_chart(evolution_moyenne_globale_par_niveau(dataframes, competences_matiere))
+with col1 :
+    st.plotly_chart(evolution_moyenne_globale_par_niveau(dataframes, competences_matiere))
 
-col2.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_fr_primaire, "Évolution en français"))
+with col2:
+    tab1,tab2=st.tabs(['Primaire','Secondaire'])
+    tab1.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_fr_primaire))
+    tab2.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_fr_secondaire))
 
-col3.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_maths_primaire, "Évolution en mathématiques"))
+with col3:
+    tab1,tab2=st.tabs(['Primaire','Secondaire'])
+    tab1.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_maths_primaire))
+    tab2.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_maths_secondaire))
+
 
 with tab2:
     print ('hello')
