@@ -32,8 +32,7 @@ sheets = {
     'geo':'191664424'
 }
 
-# Colonnes à conserver en string
-STRING_COLUMNS = ["Nom d'établissement", "Pays", "Ville", "Statut MLF"]
+
 
 @st.cache_data
 def load_sheet(file_id, gid):
@@ -52,6 +51,11 @@ def load_sheet(file_id, gid):
     print(f"⚠️ {lines_skipped} lignes ont été ignorées lors du chargement.")
 
     return df
+
+
+# Colonnes à conserver en string
+STRING_COLUMNS = ["Nom d'établissement", "Pays", "Ville", "Statut MLF"]
+
 
 def find_conversion_errors(df):
     """Identifie les valeurs non convertibles dans les colonnes numériques."""
@@ -89,6 +93,7 @@ def convert_column_types(df):
     df = clean_numeric_columns(df)  # Nettoyer et convertir les nombres
     return df
 
+@st.cache_data
 def process_all_sheets(file_id, sheets):
     """Charge, convertit et vérifie tous les onglets du Google Sheets."""
     dataframes = {}
