@@ -93,7 +93,7 @@ def convert_column_types(df):
     df = clean_numeric_columns(df)  # Nettoyer et convertir les nombres
     return df
 
-@st.cache_data
+
 def process_all_sheets(file_id, sheets):
     """Charge, convertit et vérifie tous les onglets du Google Sheets."""
     dataframes = {}
@@ -1023,10 +1023,12 @@ else :
                 st.markdown("**Corrélation maths/français**")
             with f:
                 with st.popover('Interpretation'):
-                    st.markdown("""Ce graphique représente la relation entre la moyenne en mathématiques et la moyenne en français (%) pour tous les établissements du réseau, chaque point correspondant à un établissement.
+                    st.markdown("""
+                    Ce graphique représente la relation entre la moyenne en mathématiques et la moyenne en français (%) pour tous les établissements du réseau, chaque point correspondant à un établissement.
 
                     - La ligne de tendance suggère une corrélation positive entre les performances en mathématiques et en français : les élèves obtenant de bons résultats en maths ont tendance à réussir également en français.
                     - La taille des bulles indique l'écart entre les deux moyennes : une grande bulle signifie une différence marquée entre les notes en mathématiques et en français, tandis qu'une petite bulle indique un équilibre entre les deux matières.
+
                     """)
 
             st.plotly_chart(creer_scatter_maths_francais(dataframes))
