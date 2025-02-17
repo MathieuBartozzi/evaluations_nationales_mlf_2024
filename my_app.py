@@ -133,6 +133,8 @@ competences_matiere = {
     "Ordonner des nombres": "Maths",
     "Calculer avec des nombres entiers": "Maths",
     "Résolution de problème : résoudre des problèmes en utilisant des nombres, des données et des grandeurs": "Maths",
+    "Automatismes : Mobiliser directement des procédures et des connaissances":"Maths",
+    "Espaces et géométrie : connaître et utiliser des notions de géométrie":"Maths",
     "Espaces et géométrie": "Maths",
     "Grandeurs et mesures": "Maths",
     "Nombres et calcul": "Maths",
@@ -161,6 +163,123 @@ competences_matiere = {
     "Comprendre le fonctionnement de la langue : Se repérer dans une phrase et identifier sa composition": "Français",
     "Comprendre le fonctionnement de la langue : maîtriser l'orthographe": "Français"
 }
+
+renaming_dict = {
+    # 📘 Compétences en Maths
+    "Lire des nombres": "Lecture nombres",
+    "Résoudre des problèmes": "Résolution pb",
+    "Quantifier et dénombrer": "Quantifier",
+    "Comparer des nombres": "Comparer nombres",
+    "Placer un nombre sur une ligne numérique": "Placer nombre",
+    "Reconnaitre des nombres": "Reconnaissance nb",
+    "Calculer en ligne": "Calcul ligne",
+    "Calculer mentalement": "Calcul mental",
+    "Nommer, lire, écrire, représenter des nombres": "Lire/Écrire nb",
+    "Calculer": "Calcul",
+    "Ordonner des nombres": "Ordonner nb",
+    "Calculer avec des nombres entiers": "Calcul nb entiers",
+    "Résolution de problème : résoudre des problèmes en utilisant des nombres, des données et des grandeurs": "Résolution pb avancée",
+    "Automatismes : Mobiliser directement des procédures et des connaissances": "Automatismes",
+    "Espaces et géométrie : connaître et utiliser des notions de géométrie": "Géométrie",
+    "Espaces et géométrie": "Géométrie",
+    "Grandeurs et mesures": "Grandeurs/Mesures",
+    "Nombres et calcul": "Nombres & Calcul",
+    "Calcul littéral : Utiliser des expressions littérales pour traduire ou résoudre des problèmes": "Calcul littéral",
+    "Calcul littéral : Connaître et utiliser des données et la notion de fonction": "Calcul & Fonctions",
+
+    # 📕 Compétences en Français
+    "Comprendre un texte lu par l’enseignant(e)": "Compréhension orale",
+    "Comprendre des mots lu par l’enseignant(e)": "Comprendre mots (oral)",
+    "Comprendre des phrases lues par l’enseignant(e)": "Comprendre phrases (oral)",
+    "Discriminer des sons": "Discrimination sons",
+    "Reconnaitre des lettres": "Reconnaissance lettres",
+    "Comprendre un texte lu seul(e)": "Comprendre texte (solo)",
+    "Comprendre des phrases lues seul(e)": "Comprendre phrases (solo)",
+    "Comprendre des mots et des phrases lus par l’enseignant(e)": "Comprendre mots & phrases",
+    "Écrire des syllabes": "Écriture syllabes",
+    "Lire": "Lecture",
+    "Écrire des mots dictés": "Dictée mots",
+    "Orthographe de base": "Orthographe",
+    "Se repérer dans une phrase": "Repérage phrase",
+    "Maîtriser l’orthographe grammaticale de base": "Orthographe grammaire",
+    "Construire le lexique": "Lexique",
+    "Lire et comprendre un texte": "Lecture & Compréhension",
+    "Comprendre le fonctionnement de la langue : Comprendre et mobiliser le lexique": "Comprendre lexique",
+    "Comprendre et s'exprimer à l'oral : comprendre un message oral": "Expression orale",
+    "Comprendre le fonctionnement de la langue : Se repérer dans une phrase et identifier sa composition": "Structure phrase",
+    "Comprendre le fonctionnement de la langue : maîtriser l'orthographe": "Orthographe avancée"
+}
+
+competences_fr_primaire = {
+    "Comprendre un texte": {
+        "Comprendre un texte lu par l’enseignant(e)": {"cp": True, "ce1": False, "ce2": True, "cm1": True, "cm2": True},
+        "Comprendre des mots lu par l’enseignant(e)": {"cp": True, "ce1": False, "ce2": False, "cm1": False, "cm2": False},
+        "Comprendre des phrases lues par l’enseignant(e)": {"cp": True, "ce1": False, "ce2": False, "cm1": False, "cm2": False},
+        "Comprendre des mots et des phrases lus par l’enseignant(e)": {"cp": False, "ce1": True, "ce2": False, "cm1": False, "cm2": False},
+        "Comprendre des phrases lues seul(e)": {"cp": False, "ce1": True, "ce2": False, "cm1": False, "cm2": False},
+        "Comprendre un texte lu seul(e)": {"cp": False, "ce1": True, "ce2": True, "cm1": True, "cm2": True}
+    },
+    "Lire et reconnaître les éléments du langage": {
+        "Discriminer des sons": {"cp": True, "ce1": False, "ce2": False, "cm1": False, "cm2": False},
+        "Lire": {"cp": False, "ce1": True, "ce2": True, "cm1": True, "cm2": True},
+        "Se repérer dans une phrase": {"cp": False, "ce1": False, "ce2": True, "cm1": True, "cm2": True},
+        "Construire son lexique": {"cp": False, "ce1": False, "ce2": False, "cm1": True, "cm2": True}
+    },
+    "Écrire et orthographier": {
+        "Reconnaitre des lettres": {"cp": True, "ce1": False, "ce2": False, "cm1": False, "cm2": False},
+        "Écrire des syllabes": {"cp": False, "ce1": True, "ce2": False, "cm1": False, "cm2": False},
+        "Écrire des mots dictés": {"cp": False, "ce1": False, "ce2": True, "cm1": True, "cm2": True},
+        "Maîtriser l’orthographe grammaticale de base": {"cp": False, "ce1": False, "ce2": True, "cm1": True, "cm2": True}
+    }
+}
+
+competences_maths_primaire = {
+    "Résolution de problèmes": {
+        "Résoudre des problèmes": {"cp": True, "ce1": True, "ce2": True, "cm1": True, "cm2": True}
+    },
+    "Compréhension et représentation des nombres": {
+        "Lire des nombres": {"cp": True, "ce1": False, "ce2": False, "cm1": False, "cm2": False},
+        "Ecrire des nombres": {"cp": True, "ce1": True, "ce2": False, "cm1": False, "cm2": False},
+        "Comparer des nombres": {"cp": True, "ce1": False, "ce2": False, "cm1": False, "cm2": False},
+        "Placer un nombre sur une ligne numérique": {"cp": True, "ce1": True, "ce2": False, "cm1": False, "cm2": False},
+        "Reconnaitre des nombres": {"cp": False, "ce1": True, "ce2": False, "cm1": False, "cm2": False},
+        "Ordonner des nombres": {"cp": False, "ce1": False, "ce2": True, "cm1": False, "cm2": False},
+        "Nommer, lire, écrire, représenter des nombres": {"cp": False, "ce1": False, "ce2": True, "cm1": True, "cm2": True}
+    },
+    "Calcul et opérations": {
+        "Calculer en ligne": {"cp": False, "ce1": True, "ce2": False, "cm1": False, "cm2": False},
+        "Calculer mentalement": {"cp": False, "ce1": True, "ce2": False, "cm1": False, "cm2": False},
+        "Calculer": {"cp": False, "ce1": False, "ce2": True, "cm1": True, "cm2": True},
+        "Quantifier et dénombrer": {"cp": True, "ce1": False, "ce2": False, "cm1": False, "cm2": False},
+    }
+}
+
+competences_fr_secondaire = {
+    "Comprendre un texte": {
+        "Lire et comprendre un texte":{"6e": True, "4e":True, "2nde": True},
+        "Comprendre et s'exprimer à l'oral : comprendre un message oral":{"6e": True, "4e":True, "2nde": True}},
+        "Orthographier": {"Comprendre le fonctionnement de la langue : maîtriser l'orthographe":{"6e": True, "4e":True, "2nde": True}},
+    "Reconnaître les éléments du langage": {
+        "Comprendre le fonctionnement de la langue : Se repérer dans une phrase et identifier sa composition":{"6e": True, "4e":True, "2nde": True},
+        "Comprendre le fonctionnement de la langue : Comprendre et mobiliser le lexique": {"6e": True, "4e":True, "2nde": True}},
+}
+
+competences_maths_secondaire = {
+    "Résolution et modélisation": {
+        "Résolution de problème : résoudre des problèmes en utilisant des nombres, des données et des grandeurs": {"6e": True, "4e":True, "2nde": False},
+        "Calcul littéral : Utiliser des expressions littérales pour traduire ou résoudre des problèmes": {"6e": False, "4e":False, "2nde": True},
+        "Connaître et utiliser des données et la notion de fonction": {"6e": False, "4e":True, "2nde": True}
+    },
+    "Procédures et calculs": {
+        "Automatismes : Mobiliser directement des procédures et des connaissances": {"6e": True, "4e":True, "2nde": True},
+        "Nombres et calcul : connaître les nombres et les utiliser dans les calculs": {"6e": True, "4e":True, "2nde": True},
+    },
+    "Espace et mesures": {
+        "Espaces et géométrie : connaître et utiliser des notions de géométrie": {"6e": True, "4e":True, "2nde": True},
+        "Grandeurs et mesures : Connaître des grandeurs et utiliser des mesures": {"6e": False, "4e":False, "2nde": True},
+    },
+}
+
 
 # Définition des niveaux de primaire et secondaire
 niveaux_primaire = ["cp", "ce1", "ce2", "mc1", "mc2"]
@@ -231,63 +350,6 @@ etablissements["Moyenne Maths/Français Générale"] = (etablissements["Moyenne 
 etablissements["Moyenne Maths/Français Primaire"] = (etablissements["Moyenne Maths Primaire"] + etablissements["Moyenne Français Primaire"]) / 2
 etablissements["Moyenne Maths/Français Secondaire"] = (etablissements["Moyenne Maths Secondaire"] + etablissements["Moyenne Français Secondaire"]) / 2
 
-# def carte_etablissements(etablissements, niveau,titre):
-#     """
-#     Génère une carte interactive des établissements scolaires en fonction d'une moyenne choisie (Primaire, Secondaire, ou Générale),
-#     en filtrant ceux qui n'ont pas de données pour le niveau sélectionné.
-
-#     :param etablissements: DataFrame contenant les établissements et leurs coordonnées.
-#     :param niveau: "Générale", "Primaire" ou "Secondaire" pour choisir la moyenne affichée.
-#     :param titre: Titre de la carte.
-#     :return: Figure Plotly.
-#     """
-
-#     # Sélection de la colonne correspondante et filtrage des établissements
-#     if niveau == "Générale":
-#         colonne_moyenne = "Moyenne Maths/Français Générale"
-#         df_filtre = etablissements  # Conserver tous les établissements
-#     elif niveau == "Primaire":
-#         colonne_moyenne = "Moyenne Maths/Français Primaire"
-#         df_filtre = etablissements.dropna(subset=[colonne_moyenne])  # Supprime les établissements sans résultats en primaire
-#     elif niveau == "Secondaire":
-#         colonne_moyenne = "Moyenne Maths/Français Secondaire"
-#         df_filtre = etablissements.dropna(subset=[colonne_moyenne])  # Supprime les établissements sans résultats en secondaire
-#     else:
-#         raise ValueError("Le niveau doit être 'Générale', 'Primaire' ou 'Secondaire'.")
-
-#     # Création de la carte avec les établissements filtrés
-#     fig = px.scatter_map(
-#         df_filtre,
-#         lat="Latitude",
-#         lon="Longitude",
-#         hover_name="Nom d'établissement",
-#         hover_data={
-#             "Ville": True,
-#             colonne_moyenne: True,
-#             "Latitude": False,
-#             "Longitude": False
-#         },
-#         color=colonne_moyenne,  # Dégradé de couleur basé sur la moyenne sélectionnée
-#         zoom=0.5,  # Zoom initial
-#         height=700,
-#         color_continuous_scale="RdYlGn",  # Dégradé de rouge (faible) à vert (fort)
-#     )
-
-#     # Fixer la taille des points et l'opacité
-#     fig.update_traces(marker=dict(size=20, opacity=0.7))
-
-#     # Mise en page et affichage
-#     fig.update_layout(
-#         map_style="open-street-map",
-#         margin={"r": 0, "t": 0, "l": 0, "b": 0},
-#         coloraxis_colorbar=dict(title=None)  # Ajout de la barre de couleur
-#     )
-
-#     fig.update_layout(
-#         height=350
-#         )
-
-#     return fig
 
 def jitter_coordinates(df, lat_col="Latitude", lon_col="Longitude", jitter=0.1):
     """
@@ -492,6 +554,8 @@ def creer_boxplot_combine(dataframes):
                     data.append([niveau, score, matiere])
 
     df_final = pd.DataFrame(data, columns=["Niveau", "Score", "Matière"])
+    df_final["Niveau"] = df_final["Niveau"].str.upper()
+
 
     # Création du boxplot combiné
     fig = px.box(
@@ -574,8 +638,8 @@ def evolution_moyenne_globale_par_niveau(dataframes, competences_matiere):
         color_discrete_sequence=px.colors.qualitative.G10
     )
     fig.update_layout(
-        title='Evolution globale',
-        height=400,
+        # title='Evolution globale',
+        height=500,
         legend_title_text="",
         legend=dict(
             orientation="h",  # Affichage horizontal
@@ -589,116 +653,8 @@ def evolution_moyenne_globale_par_niveau(dataframes, competences_matiere):
 
     return fig
 
-competences_fr_primaire = {
-    "Comprendre un texte": {
-        "Comprendre un texte lu par l’enseignant(e)": {"cp": True, "ce1": False, "ce2": True, "cm1": True, "cm2": True},
-        "Comprendre des mots lu par l’enseignant(e)": {"cp": True, "ce1": False, "ce2": False, "cm1": False, "cm2": False},
-        "Comprendre des phrases lues par l’enseignant(e)": {"cp": True, "ce1": False, "ce2": False, "cm1": False, "cm2": False},
-        "Comprendre des mots et des phrases lus par l’enseignant(e)": {"cp": False, "ce1": True, "ce2": False, "cm1": False, "cm2": False},
-        "Comprendre des phrases lues seul(e)": {"cp": False, "ce1": True, "ce2": False, "cm1": False, "cm2": False},
-        "Comprendre un texte lu seul(e)": {"cp": False, "ce1": True, "ce2": True, "cm1": True, "cm2": True}
-    },
-    "Lire et reconnaître les éléments du langage": {
-        "Discriminer des sons": {"cp": True, "ce1": False, "ce2": False, "cm1": False, "cm2": False},
-        "Lire": {"cp": False, "ce1": True, "ce2": True, "cm1": True, "cm2": True},
-        "Se repérer dans une phrase": {"cp": False, "ce1": False, "ce2": True, "cm1": True, "cm2": True},
-        "Construire son lexique": {"cp": False, "ce1": False, "ce2": False, "cm1": True, "cm2": True}
-    },
-    "Écrire et orthographier": {
-        "Reconnaitre des lettres": {"cp": True, "ce1": False, "ce2": False, "cm1": False, "cm2": False},
-        "Écrire des syllabes": {"cp": False, "ce1": True, "ce2": False, "cm1": False, "cm2": False},
-        "Écrire des mots dictés": {"cp": False, "ce1": False, "ce2": True, "cm1": True, "cm2": True},
-        "Maîtriser l’orthographe grammaticale de base": {"cp": False, "ce1": False, "ce2": True, "cm1": True, "cm2": True}
-    }
-}
-
-competences_maths_primaire = {
-    "Résolution de problèmes": {
-        "Résoudre des problèmes": {"cp": True, "ce1": True, "ce2": True, "cm1": True, "cm2": True}
-    },
-    "Compréhension et représentation des nombres": {
-        "Lire des nombres": {"cp": True, "ce1": False, "ce2": False, "cm1": False, "cm2": False},
-        "Ecrire des nombres": {"cp": True, "ce1": True, "ce2": False, "cm1": False, "cm2": False},
-        "Comparer des nombres": {"cp": True, "ce1": False, "ce2": False, "cm1": False, "cm2": False},
-        "Placer un nombre sur une ligne numérique": {"cp": True, "ce1": True, "ce2": False, "cm1": False, "cm2": False},
-        "Reconnaitre des nombres": {"cp": False, "ce1": True, "ce2": False, "cm1": False, "cm2": False},
-        "Ordonner des nombres": {"cp": False, "ce1": False, "ce2": True, "cm1": False, "cm2": False},
-        "Nommer, lire, écrire, représenter des nombres": {"cp": False, "ce1": False, "ce2": True, "cm1": True, "cm2": True}
-    },
-    "Calcul et opérations": {
-        "Calculer en ligne": {"cp": False, "ce1": True, "ce2": False, "cm1": False, "cm2": False},
-        "Calculer mentalement": {"cp": False, "ce1": True, "ce2": False, "cm1": False, "cm2": False},
-        "Calculer": {"cp": False, "ce1": False, "ce2": True, "cm1": True, "cm2": True},
-        "Quantifier et dénombrer": {"cp": True, "ce1": False, "ce2": False, "cm1": False, "cm2": False},
-    }
-}
-
-competences_fr_secondaire = {
-    "Comprendre un texte": {
-        "Lire et comprendre un texte":{"6e": True, "4e":True, "2nde": True},
-        "Comprendre et s'exprimer à l'oral : comprendre un message oral":{"6e": True, "4e":True, "2nde": True}},
-        "Orthographier": {"Comprendre le fonctionnement de la langue : maîtriser l'orthographe":{"6e": True, "4e":True, "2nde": True}},
-    "Reconnaître les éléments du langage": {
-        "Comprendre le fonctionnement de la langue : Se repérer dans une phrase et identifier sa composition":{"6e": True, "4e":True, "2nde": True},
-        "Comprendre le fonctionnement de la langue : Comprendre et mobiliser le lexique": {"6e": True, "4e":True, "2nde": True}},
-}
-
-competences_maths_secondaire = {
-    "Résolution et modélisation": {
-        "Résolution de problème : résoudre des problèmes en utilisant des nombres, des données et des grandeurs": {"6e": True, "4e":True, "2nde": False},
-        "Calcul littéral : Utiliser des expressions littérales pour traduire ou résoudre des problèmes": {"6e": False, "4e":False, "2nde": True},
-        "Connaître et utiliser des données et la notion de fonction": {"6e": False, "4e":True, "2nde": True}
-    },
-    "Procédures et calculs": {
-        "Automatismes : Mobiliser directement des procédures et des connaissances": {"6e": True, "4e":True, "2nde": True},
-        "Nombres et calcul : connaître les nombres et les utiliser dans les calculs": {"6e": True, "4e":True, "2nde": True},
-    },
-    "Espace et mesures": {
-        "Espaces et géométrie : connaître et utiliser des notions de géométrie": {"6e": True, "4e":True, "2nde": True},
-        "Grandeurs et mesures : Connaître des grandeurs et utiliser des mesures": {"6e": False, "4e":False, "2nde": True},
-    },
-}
 
 
-
-
-#### FOCNTIONNE ###
-# # Fonction pour calculer la moyenne par compétence principale
-# def calculer_moyenne_par_competence_principale(dataframes, competences_par_niveau):
-
-#     niveaux = ["cp", "ce1", "ce2", "cm1", "cm2",'6e','4e','2nde']
-#     moyenne_globale = {"Niveau": [], "Compétence": [], "Moyenne": []}
-
-#     for competence_generale, sous_competences in competences_par_niveau.items():
-#         for niveau in niveaux:
-#             if niveau in dataframes:
-#                 df = dataframes[niveau]
-#                 # Sélection des colonnes correspondant aux sous-compétences
-#                 cols = [col for col in sous_competences if col in df.columns and sous_competences[col][niveau]]
-#                 if cols:
-#                     moyenne = df[cols].mean().mean()
-#                     st.write(f"📌 Moyenne calculée pour {niveau.upper()} - {competence_generale} : {moyenne}")# Moyenne des sous-compétences disponibles
-#                     if not np.isnan(moyenne):
-#                         moyenne_globale["Niveau"].append(niveau.upper())
-#                         moyenne_globale["Compétence"].append(competence_generale)
-#                         moyenne_globale["Moyenne"].append(moyenne)
-#                     else:
-#                         st.write(f"⚠️ La moyenne est NaN pour {niveau.upper()} - {competence_generale}, il n'y a peut-être pas de valeurs numériques.")
-#             else:
-#                 st.write(f"⚠️ Attention : Données absentes pour le niveau **{niveau.upper()}**")
-
-#     df_result = pd.DataFrame(moyenne_globale)
-#     if df_result.empty:
-#         st.write("⚠️ **Aucune donnée calculée, vérifiez vos fichiers sources !**")
-
-
-#     # ✅ Assurer que les niveaux sont bien ordonnés
-#     # Appliquer l'ordre des niveaux
-#     niveau_ordre = ["CP", "CE1", "CE2", "CM1", "CM2"]
-#     df_result["Niveau"] = pd.Categorical(df_result["Niveau"], categories=niveau_ordre, ordered=True)
-#     df_result.sort_values("Niveau", inplace=True)
-
-#     return df_result
 
 # Fonction pour calculer la moyenne par compétence principale
 def calculer_moyenne_par_competence_principale(dataframes, competences_par_niveau, niveaux):
@@ -764,11 +720,6 @@ def creer_graphique_evolution_global(df_moyenne_globale):
 
 
 
-# # Exécution des calculs et affichage des graphiques
-# df_moyenne_globale_fr_primaire = calculer_moyenne_par_competence_principale(dataframes, competences_fr_primaire)
-# df_moyenne_globale_maths_primaire = calculer_moyenne_par_competence_principale(dataframes, competences_maths_primaire)
-# df_moyenne_globale_maths_secondaire = calculer_moyenne_par_competence_principale(dataframes, competences_maths_secondaire)
-# df_moyenne_globale_fr_secondaire = calculer_moyenne_par_competence_principale(dataframes, competences_fr_secondaire)
 
 niveaux_primaire = ["cp", "ce1", "ce2", "cm1", "cm2"]
 niveaux_secondaire = ["6e", "4e", "2nde"]
@@ -783,15 +734,15 @@ df_moyenne_globale_maths_secondaire = calculer_moyenne_par_competence_principale
 
 
 
-
 # Trier correctement selon l'ordre pédagogique
 df_moyenne_globale_maths_primaire = df_moyenne_globale_maths_primaire.sort_values("Niveau")
 
 
-tab1, tab2= st.tabs(['**RESULTATS RÉSEAU**','RESULTATS PAR ÉTABLISSEMENT'])
+
+tab1, tab7 = st.tabs(["**RESULTATS RÉSEAU**", "**RESULTATS PAR ÉTABLISSEMENT**"])
+
 
 with tab1:
-
     a, b = st.columns(2)
     a.metric(label="Moyenne en mathématiques", value=f"{moyenne_maths:.2f}%",border=True)
     b.metric(label="Moyenne en Français", value=f"{moyenne_francais:.2f}%",border=True)
@@ -811,7 +762,54 @@ with tab1:
         tab2.plotly_chart(carte_etablissements(etablissements, 'Secondaire', titre='Secondaire'))
 
 
-    # st.plotly_chart(creer_scatter_maths_francais(dataframes))
+
+
+
+    col1,col2=st.columns(2)
+
+    with col1:
+        c, d = st.columns(2)
+        with c:
+            st.markdown("**Dispersion par niveaux**")
+        with d:
+            with st.popover('Interpretation'):
+                st.markdown("""
+                Ce graphique illustre la répartition des résultats en mathématiques et en français (%) selon les niveaux scolaires, avec un boxplot par matière.
+
+                - Les médianes en maths et en français diminuent légèrement entre le primaire et le secondaire, traduisant une évolution des performances au fil des années.
+                - Les écarts de scores sont plus marqués en français, notamment au CM1 et en 2nde, ce qui reflète une plus grande variabilité des résultats dans cette matière.
+                - Certains scores en français dépassent 100%, indiquant que les élèves ont franchi les seuils d’évaluation en fluence.
+                """)
+
+        # st.markdown("**Dispersion par niveaux**")
+
+        # _,col1,_=st.columns(3)
+
+
+        # with col1:
+        #     with st.popover('Interpretation'):
+        #         st.markdown("""
+        #         Ce graphique illustre la répartition des résultats en mathématiques et en français (%) selon les niveaux scolaires, avec un boxplot par matière.
+
+        #         - Les médianes en maths et en français diminuent légèrement entre le primaire et le secondaire, traduisant une évolution des performances au fil des années.
+        #         - Les écarts de scores sont plus marqués en français, notamment au CM1 et en 2nde, ce qui reflète une plus grande variabilité des résultats dans cette matière.
+        #         - Certains scores en français dépassent 100%, indiquant que les élèves ont franchi les seuils d’évaluation en fluence.
+        #         """)
+
+        st.plotly_chart(creer_boxplot_combine(dataframes))
+
+    with col2 :
+        e, f = st.columns(2)
+        with e:
+            st.markdown("**Corrélation maths/français**")
+        with f:
+            with st.popover('Interpretation'):
+                st.markdown("""Ce graphique représente la relation entre la moyenne en mathématiques et la moyenne en français (%) pour tous les établissements du réseau, chaque point correspondant à un établissement.
+
+                - La ligne de tendance suggère une corrélation positive entre les performances en mathématiques et en français : les élèves obtenant de bons résultats en maths ont tendance à réussir également en français.
+                - La taille des bulles indique l'écart entre les deux moyennes : une grande bulle signifie une différence marquée entre les notes en mathématiques et en français, tandis qu'une petite bulle indique un équilibre entre les deux matières.
+                """)
+
         # _,col1,_=st.columns(3)
 
 
@@ -823,38 +821,257 @@ with tab1:
         #         - La ligne de tendance suggère une corrélation positive entre les performances en mathématiques et en français : les élèves obtenant de bons résultats en maths ont tendance à réussir également en français.
         #         - La taille des bulles indique l'écart entre les deux moyennes : une grande bulle signifie une différence marquée entre les notes en mathématiques et en français, tandis qu'une petite bulle indique un équilibre entre les deux matières.
         #         """)
-
-st.markdown("**Dispersion par niveaux et corrélation maths/français**")
-col1,col2=st.columns(2)
-
-with col1:
-    st.plotly_chart(creer_boxplot_combine(dataframes))
-
-    # st.plotly_chart(evolution_moyenne_globale_par_niveau(dataframes, competences_matiere))
-
-with col2 :
-
-    st.plotly_chart(creer_scatter_maths_francais(dataframes))
+        st.plotly_chart(creer_scatter_maths_francais(dataframes))
 
 
 
-# st.markdown("**Evolution global, par matiere et degré**")
 
-col1, col2, col3=st.columns(3)
+    col1, col2, col3=st.columns(3)
 
-with col1 :
-    st.plotly_chart(evolution_moyenne_globale_par_niveau(dataframes, competences_matiere))
+    with col1 :
+        st.markdown('**Évolution globale**')
+        st.plotly_chart(evolution_moyenne_globale_par_niveau(dataframes, competences_matiere))
 
-with col2:
-    tab1,tab2=st.tabs(['Primaire','Secondaire'])
-    tab1.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_fr_primaire))
-    tab2.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_fr_secondaire))
+    with col2:
+        st.markdown('**Évolution par compétences : Français**')
+        tab3,tab4=st.tabs(['Primaire','Secondaire'])
+        tab3.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_fr_primaire))
+        tab4.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_fr_secondaire))
 
-with col3:
-    tab1,tab2=st.tabs(['Primaire','Secondaire'])
-    tab1.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_maths_primaire))
-    tab2.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_maths_secondaire))
+    with col3:
+        st.markdown('**Évolution par compétences : Mathématiques**')
+        tab5,tab6=st.tabs(['Primaire','Secondaire'])
+        tab5.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_maths_primaire))
+        tab6.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_maths_secondaire))
 
 
-with tab2:
-    print ('hello')
+with tab7:
+    def evolution_moyenne_par_etablissement(dataframes, competences_matiere, etablissement_selectionne):
+        """
+        Crée un graphique en ligne montrant l'évolution des moyennes en Français et en Maths
+        pour un établissement sélectionné au cours des différents niveaux.
+
+        :param dataframes: Dictionnaire contenant les DataFrames des niveaux scolaires.
+        :param competences_matiere: Dictionnaire associant chaque compétence à une matière.
+        :param etablissement_selectionne: Nom de l'établissement sélectionné.
+        :return: Figure Plotly.
+        """
+
+        # 📌 Liste des niveaux dans l'ordre
+        niveaux = ["cp", "ce1", "ce2", "cm1", "cm2", "6e", "4e", "2nde"]
+        niveau_labels = {
+            "cp": "CP", "ce1": "CE1", "ce2": "CE2", "cm1": "CM1", "cm2": "CM2",
+            "6e": "6e", "4e": "4e", "2nde": "2nde"
+        }
+
+        # 📌 Initialisation d'un dictionnaire pour stocker les moyennes
+        moyenne_etablissement = {"Niveau": [], "Matière": [], "Moyenne": []}
+
+        # 📌 Parcours des niveaux et calcul des moyennes pour l'établissement sélectionné
+        for niveau in niveaux:
+            if niveau in dataframes:
+                df = dataframes[niveau]
+
+                # 📌 Filtrer uniquement l'établissement sélectionné
+                df_etablissement = df[df["Nom d'établissement"] == etablissement_selectionne]
+
+                if not df_etablissement.empty:
+                    # 📊 Calcul de la moyenne en maths et français pour cet établissement
+                    maths_moyenne = df_etablissement[
+                        [col for col in df_etablissement.columns if competences_matiere.get(col) == "Maths"]
+                    ].mean().mean()
+
+                    francais_moyenne = df_etablissement[
+                        [col for col in df_etablissement.columns if competences_matiere.get(col) == "Français"]
+                    ].mean().mean()
+
+                    # 📌 Ajouter les moyennes au dictionnaire
+                    if not np.isnan(maths_moyenne):
+                        moyenne_etablissement["Niveau"].append(niveau_labels[niveau])
+                        moyenne_etablissement["Matière"].append("Maths")
+                        moyenne_etablissement["Moyenne"].append(maths_moyenne)
+
+                    if not np.isnan(francais_moyenne):
+                        moyenne_etablissement["Niveau"].append(niveau_labels[niveau])
+                        moyenne_etablissement["Matière"].append("Français")
+                        moyenne_etablissement["Moyenne"].append(francais_moyenne)
+
+        # 📌 Création du DataFrame final
+        df_moyenne_etablissement = pd.DataFrame(moyenne_etablissement)
+
+        if df_moyenne_etablissement.empty:
+            return None  # Aucune donnée disponible pour cet établissement
+
+        # 📌 Création du graphique en ligne
+        fig = px.line(
+            df_moyenne_etablissement,
+            x="Niveau",
+            y="Moyenne",
+            markers=True,
+            color="Matière",
+            color_discrete_sequence=px.colors.qualitative.G10
+        )
+
+        # 📌 Mise en page du graphique
+        fig.update_layout(
+            title="Évolution globale maths/français",
+            height=400,
+            legend_title_text="",
+            legend=dict(
+                orientation="h",  # Affichage horizontal
+                yanchor="top",
+                y=-0.2,  # Position sous le graphique
+                xanchor="center",
+                x=0.5  # Centre la légende horizontalement
+            ),
+            xaxis_title=None  # Supprime complètement l'axe X
+        )
+
+        return fig
+
+
+
+    def radar_chart_etablissement_px(df_niveau, competences_matiere, etablissement_selectionne):
+        """
+        Génère deux radar charts (Maths & Français) avec plotly.express pour comparer
+        un établissement sélectionné à la moyenne des autres établissements.
+
+        :param df_niveau: DataFrame contenant les données du niveau sélectionné.
+        :param competences_matiere: Dictionnaire associant chaque compétence à une matière.
+        :param etablissement_selectionne: Nom de l'établissement sélectionné.
+        """
+
+        # 📌 Vérifier si l'établissement a des données pour ce niveau
+        df_etab = df_niveau[df_niveau["Nom d'établissement"] == etablissement_selectionne]
+
+        if df_etab.empty:
+            st.warning(f"⚠️ Aucune donnée disponible pour {etablissement_selectionne} à ce niveau.")
+            return
+
+        # 📌 Séparer les compétences Maths et Français
+        competences_maths = [col for col in df_niveau.columns if competences_matiere.get(col) == "Maths"]
+        competences_francais = [col for col in df_niveau.columns if competences_matiere.get(col) == "Français"]
+
+        # 📌 Appliquer le renommage des compétences
+        competences_maths_renamed = [renaming_dict.get(comp, comp) for comp in competences_maths]
+        competences_francais_renamed = [renaming_dict.get(comp, comp) for comp in competences_francais]
+
+        # 📌 Calcul des scores moyens pour l'établissement sélectionné
+        etab_maths_scores = df_etab[competences_maths].mean().tolist()
+        etab_francais_scores = df_etab[competences_francais].mean().tolist()
+
+        # 📌 Calcul des moyennes des autres établissements (exclure l'établissement sélectionné)
+        df_autres_etabs = df_niveau[df_niveau["Nom d'établissement"] != etablissement_selectionne]
+
+        if df_autres_etabs.empty:
+            moyenne_autres_maths = [0] * len(competences_maths)
+            moyenne_autres_francais = [0] * len(competences_francais)
+        else:
+            moyenne_autres_maths = df_autres_etabs[competences_maths].mean().tolist()
+            moyenne_autres_francais = df_autres_etabs[competences_francais].mean().tolist()
+
+        # 📌 Construction des DataFrames pour Plotly Express
+        df_maths = pd.DataFrame({
+            "r": etab_maths_scores + moyenne_autres_maths,
+            "theta": competences_maths_renamed * 2,  # ✅ Renommage appliqué
+            "Source": [etablissement_selectionne] * len(competences_maths) + ["Moyenne autres établissements"] * len(competences_maths)
+        })
+
+        df_francais = pd.DataFrame({
+            "r": etab_francais_scores + moyenne_autres_francais,
+            "theta": competences_francais_renamed * 2,  # ✅ Renommage appliqué
+            "Source": [etablissement_selectionne] * len(competences_francais) + ["Moyenne autres établissements"] * len(competences_francais)
+        })
+
+        # 📌 Création des radars avec `plotly.express`
+        fig_maths = px.line_polar(df_maths, r='r', theta='theta', color='Source', line_close=True)
+        fig_maths.update_traces(fill='toself',line=dict(color=px.colors.qualitative.G10[0]))
+        fig_maths.update_layout(
+            title="📊 Compétences en Maths",
+            height=350,
+            legend=dict(
+            orientation="h",  # Légende horizontale
+            yanchor="top",
+            y=-0.2,  # Position sous le graphique
+            xanchor="center",
+            x=0.5  # Centrer la légende
+        ))
+
+        fig_francais = px.line_polar(df_francais, r='r', theta='theta', color='Source', line_close=True)
+        fig_francais.update_traces(fill='toself',line=dict(color=px.colors.qualitative.G10[1]))
+        fig_francais.update_layout(
+            title="📖 Compétences en Français",
+            height=350,
+            legend=dict(
+            orientation="h",
+            yanchor="top",
+            y=-0.2,
+            xanchor="center",
+            x=0.5
+        ))
+
+         # 📌 Faire en sorte que la moyenne soit une ligne non remplie
+        fig_maths.update_traces(fill=None, line=dict(color=px.colors.qualitative.G10[9]),selector=dict(name="Moyenne autres établissements"))
+        fig_francais.update_traces(fill=None, line=dict(color=px.colors.qualitative.G10[8]),selector=dict(name="Moyenne autres établissements"))
+
+
+
+        # 📌 Affichage des graphes côte à côte
+        col1, col2 = st.columns(2)
+        with col1:
+            st.plotly_chart(fig_maths)
+        with col2:
+            st.plotly_chart(fig_francais)
+
+
+    # 📌 Créer une colonne combinée "Établissement (Pays)"
+    etablissements["Etablissement_Pays"] = etablissements["Nom d'établissement"] + " (" + etablissements["Pays"] + ")"
+
+    # 📌 Récupération de la liste des établissements uniques
+    etablissements_list = etablissements["Etablissement_Pays"].unique().tolist()
+
+    # 📌 Sélecteur interactif avec autocomplétion
+    selected_etablissement = st.selectbox(
+        "🔍 Recherchez votre établissement :",
+        sorted(etablissements_list),
+        index=0
+    )
+
+    # 📌 Extraire uniquement le nom de l'établissement sélectionné
+    nom_etablissement_selectionne = selected_etablissement.split(" (")[0]
+
+    # 📌 Filtrer les données en fonction de l'établissement sélectionné
+    etablissement_data = etablissements[etablissements["Nom d'établissement"] == nom_etablissement_selectionne]
+
+
+
+    col4,col5=st.columns([1,3])
+
+    with col4:
+        # 📊 Générer le graphique d'évolution des moyennes pour l'établissement vs réseau
+        fig_comparaison = evolution_moyenne_par_etablissement(dataframes, competences_matiere, nom_etablissement_selectionne)
+
+        if fig_comparaison:
+            st.plotly_chart(fig_comparaison)
+        else:
+            st.warning("⚠️ Aucune donnée disponible pour cet établissement.")
+
+    with col5:
+        tab10,tab11,tab12,tab13,tab14,tab15,tab16,tab17=st.tabs(['CP','CE1','CE2','CM1', 'CM2', '6E','4E','2NDE'])
+
+        with tab10:
+            radar_chart_etablissement_px(dataframes['cp'], competences_matiere, nom_etablissement_selectionne)
+        with tab11 :
+            radar_chart_etablissement_px(dataframes['ce1'], competences_matiere, nom_etablissement_selectionne)
+        with tab12:
+            radar_chart_etablissement_px(dataframes['ce2'], competences_matiere, nom_etablissement_selectionne)
+        with tab13:
+            radar_chart_etablissement_px(dataframes['cm1'], competences_matiere, nom_etablissement_selectionne)
+        with tab14:
+            radar_chart_etablissement_px(dataframes['cm2'], competences_matiere, nom_etablissement_selectionne)
+        with tab15 :
+            radar_chart_etablissement_px(dataframes['6e'], competences_matiere, nom_etablissement_selectionne)
+        with tab16:
+            radar_chart_etablissement_px(dataframes['4e'], competences_matiere, nom_etablissement_selectionne)
+        with tab17:
+            radar_chart_etablissement_px(dataframes['2nde'], competences_matiere, nom_etablissement_selectionne)
