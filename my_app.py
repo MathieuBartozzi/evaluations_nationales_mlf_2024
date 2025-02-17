@@ -4,9 +4,9 @@ import pandas as pd
 import plotly.express as px
 import statsmodels.api as sm
 import numpy as np
+import hashlib
 
 st.set_page_config(layout="wide")
-st.logo('logo_osui.png',size='large')
 
 
 # Fonction pour charger un onglet spécifique depuis Google Sheets
@@ -17,8 +17,7 @@ def load_sheet(file_id, gid):
     return df
 
 # Charger chaque onglet dans un DataFrame
-file_id = st.secrets["google_sheets"]["file_id"]
-# file_id = "1DoYkiK9hmuoXnw2J4Hu0DC9K-WV53DH3Mus8oAkMW88"
+file_id = st.secrets["file_id"]
 
 # Dictionnaire des onglets et leurs identifiants GID
 sheets = {
@@ -737,341 +736,368 @@ df_moyenne_globale_maths_secondaire = calculer_moyenne_par_competence_principale
 # Trier correctement selon l'ordre pédagogique
 df_moyenne_globale_maths_primaire = df_moyenne_globale_maths_primaire.sort_values("Niveau")
 
-
-
-tab1, tab7 = st.tabs(["**RESULTATS RÉSEAU**", "**RESULTATS PAR ÉTABLISSEMENT**"])
-
-
-with tab1:
-    a, b = st.columns(2)
-    a.metric(label="Moyenne en mathématiques", value=f"{moyenne_maths:.2f}%",border=True)
-    b.metric(label="Moyenne en Français", value=f"{moyenne_francais:.2f}%",border=True)
-
-
-    st.markdown('**Primaire / Secondaire : moyenne et répartition géographique des résultats**')
-    col1, col2=st.columns([1,2])
-
-    with col1:
-        # Génération et Affichagedu graphique
-        st.plotly_chart(creer_bar_chart_maths_francais(moyenne_maths_primaire,moyenne_francais_primaire,moyenne_maths_secondaire,moyenne_francais_secondaire))
-
-    with col2 :
-        tab1, tab2= st.tabs(["Primaire", 'Secondaire'])
-        etablissements=jitter_coordinates(etablissements,jitter=0.001)
-        tab1.plotly_chart(carte_etablissements(etablissements, 'Primaire', titre='Primaire'))
-        tab2.plotly_chart(carte_etablissements(etablissements, 'Secondaire', titre='Secondaire'))
-
-
-
-
-
-    col1,col2=st.columns(2)
-
-    with col1:
-        c, d = st.columns(2)
-        with c:
-            st.markdown("**Dispersion par niveaux**")
-        with d:
-            with st.popover('Interpretation'):
-                st.markdown("""
-                Ce graphique illustre la répartition des résultats en mathématiques et en français (%) selon les niveaux scolaires, avec un boxplot par matière.
-
-                - Les médianes en maths et en français diminuent légèrement entre le primaire et le secondaire, traduisant une évolution des performances au fil des années.
-                - Les écarts de scores sont plus marqués en français, notamment au CM1 et en 2nde, ce qui reflète une plus grande variabilité des résultats dans cette matière.
-                - Certains scores en français dépassent 100%, indiquant que les élèves ont franchi les seuils d’évaluation en fluence.
-                """)
-
-        # st.markdown("**Dispersion par niveaux**")
-
-        # _,col1,_=st.columns(3)
-
-
-        # with col1:
-        #     with st.popover('Interpretation'):
-        #         st.markdown("""
-        #         Ce graphique illustre la répartition des résultats en mathématiques et en français (%) selon les niveaux scolaires, avec un boxplot par matière.
-
-        #         - Les médianes en maths et en français diminuent légèrement entre le primaire et le secondaire, traduisant une évolution des performances au fil des années.
-        #         - Les écarts de scores sont plus marqués en français, notamment au CM1 et en 2nde, ce qui reflète une plus grande variabilité des résultats dans cette matière.
-        #         - Certains scores en français dépassent 100%, indiquant que les élèves ont franchi les seuils d’évaluation en fluence.
-        #         """)
-
-        st.plotly_chart(creer_boxplot_combine(dataframes))
-
-    with col2 :
-        e, f = st.columns(2)
-        with e:
-            st.markdown("**Corrélation maths/français**")
-        with f:
-            with st.popover('Interpretation'):
-                st.markdown("""Ce graphique représente la relation entre la moyenne en mathématiques et la moyenne en français (%) pour tous les établissements du réseau, chaque point correspondant à un établissement.
-
-                - La ligne de tendance suggère une corrélation positive entre les performances en mathématiques et en français : les élèves obtenant de bons résultats en maths ont tendance à réussir également en français.
-                - La taille des bulles indique l'écart entre les deux moyennes : une grande bulle signifie une différence marquée entre les notes en mathématiques et en français, tandis qu'une petite bulle indique un équilibre entre les deux matières.
-                """)
-
-        # _,col1,_=st.columns(3)
-
-
-        # with col1:
-        #     with st.popover('Interpretation'):
-        #         st.markdown("""
-        #         Ce graphique représente la relation entre la moyenne en mathématiques et la moyenne en français (%) pour tous les établissements du réseau, chaque point correspondant à un établissement.
-
-        #         - La ligne de tendance suggère une corrélation positive entre les performances en mathématiques et en français : les élèves obtenant de bons résultats en maths ont tendance à réussir également en français.
-        #         - La taille des bulles indique l'écart entre les deux moyennes : une grande bulle signifie une différence marquée entre les notes en mathématiques et en français, tandis qu'une petite bulle indique un équilibre entre les deux matières.
-        #         """)
-        st.plotly_chart(creer_scatter_maths_francais(dataframes))
-
-
-
-
-    col1, col2, col3=st.columns(3)
-
-    with col1 :
-        st.markdown('**Évolution globale**')
-        st.plotly_chart(evolution_moyenne_globale_par_niveau(dataframes, competences_matiere))
-
-    with col2:
-        st.markdown('**Évolution par compétences : Français**')
-        tab3,tab4=st.tabs(['Primaire','Secondaire'])
-        tab3.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_fr_primaire))
-        tab4.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_fr_secondaire))
-
-    with col3:
-        st.markdown('**Évolution par compétences : Mathématiques**')
-        tab5,tab6=st.tabs(['Primaire','Secondaire'])
-        tab5.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_maths_primaire))
-        tab6.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_maths_secondaire))
-
-
-with tab7:
-    def evolution_moyenne_par_etablissement(dataframes, competences_matiere, etablissement_selectionne):
-        """
-        Crée un graphique en ligne montrant l'évolution des moyennes en Français et en Maths
-        pour un établissement sélectionné au cours des différents niveaux.
-
-        :param dataframes: Dictionnaire contenant les DataFrames des niveaux scolaires.
-        :param competences_matiere: Dictionnaire associant chaque compétence à une matière.
-        :param etablissement_selectionne: Nom de l'établissement sélectionné.
-        :return: Figure Plotly.
-        """
-
-        # 📌 Liste des niveaux dans l'ordre
-        niveaux = ["cp", "ce1", "ce2", "cm1", "cm2", "6e", "4e", "2nde"]
-        niveau_labels = {
-            "cp": "CP", "ce1": "CE1", "ce2": "CE2", "cm1": "CM1", "cm2": "CM2",
-            "6e": "6e", "4e": "4e", "2nde": "2nde"
-        }
-
-        # 📌 Initialisation d'un dictionnaire pour stocker les moyennes
-        moyenne_etablissement = {"Niveau": [], "Matière": [], "Moyenne": []}
-
-        # 📌 Parcours des niveaux et calcul des moyennes pour l'établissement sélectionné
-        for niveau in niveaux:
-            if niveau in dataframes:
-                df = dataframes[niveau]
-
-                # 📌 Filtrer uniquement l'établissement sélectionné
-                df_etablissement = df[df["Nom d'établissement"] == etablissement_selectionne]
-
-                if not df_etablissement.empty:
-                    # 📊 Calcul de la moyenne en maths et français pour cet établissement
-                    maths_moyenne = df_etablissement[
-                        [col for col in df_etablissement.columns if competences_matiere.get(col) == "Maths"]
-                    ].mean().mean()
-
-                    francais_moyenne = df_etablissement[
-                        [col for col in df_etablissement.columns if competences_matiere.get(col) == "Français"]
-                    ].mean().mean()
-
-                    # 📌 Ajouter les moyennes au dictionnaire
-                    if not np.isnan(maths_moyenne):
-                        moyenne_etablissement["Niveau"].append(niveau_labels[niveau])
-                        moyenne_etablissement["Matière"].append("Maths")
-                        moyenne_etablissement["Moyenne"].append(maths_moyenne)
-
-                    if not np.isnan(francais_moyenne):
-                        moyenne_etablissement["Niveau"].append(niveau_labels[niveau])
-                        moyenne_etablissement["Matière"].append("Français")
-                        moyenne_etablissement["Moyenne"].append(francais_moyenne)
-
-        # 📌 Création du DataFrame final
-        df_moyenne_etablissement = pd.DataFrame(moyenne_etablissement)
-
-        if df_moyenne_etablissement.empty:
-            return None  # Aucune donnée disponible pour cet établissement
-
-        # 📌 Création du graphique en ligne
-        fig = px.line(
-            df_moyenne_etablissement,
-            x="Niveau",
-            y="Moyenne",
-            markers=True,
-            color="Matière",
-            color_discrete_sequence=px.colors.qualitative.G10
-        )
-
-        # 📌 Mise en page du graphique
-        fig.update_layout(
-            title="Évolution globale maths/français",
-            height=400,
-            legend_title_text="",
-            legend=dict(
-                orientation="h",  # Affichage horizontal
-                yanchor="top",
-                y=-0.2,  # Position sous le graphique
-                xanchor="center",
-                x=0.5  # Centre la légende horizontalement
-            ),
-            xaxis_title=None  # Supprime complètement l'axe X
-        )
-
-        return fig
-
-
-
-    def radar_chart_etablissement_px(df_niveau, competences_matiere, etablissement_selectionne):
-        """
-        Génère deux radar charts (Maths & Français) avec plotly.express pour comparer
-        un établissement sélectionné à la moyenne des autres établissements.
-
-        :param df_niveau: DataFrame contenant les données du niveau sélectionné.
-        :param competences_matiere: Dictionnaire associant chaque compétence à une matière.
-        :param etablissement_selectionne: Nom de l'établissement sélectionné.
-        """
-
-        # 📌 Vérifier si l'établissement a des données pour ce niveau
-        df_etab = df_niveau[df_niveau["Nom d'établissement"] == etablissement_selectionne]
-
-        if df_etab.empty:
-            st.warning(f"⚠️ Aucune donnée disponible pour {etablissement_selectionne} à ce niveau.")
-            return
-
-        # 📌 Séparer les compétences Maths et Français
-        competences_maths = [col for col in df_niveau.columns if competences_matiere.get(col) == "Maths"]
-        competences_francais = [col for col in df_niveau.columns if competences_matiere.get(col) == "Français"]
-
-        # 📌 Appliquer le renommage des compétences
-        competences_maths_renamed = [renaming_dict.get(comp, comp) for comp in competences_maths]
-        competences_francais_renamed = [renaming_dict.get(comp, comp) for comp in competences_francais]
-
-        # 📌 Calcul des scores moyens pour l'établissement sélectionné
-        etab_maths_scores = df_etab[competences_maths].mean().tolist()
-        etab_francais_scores = df_etab[competences_francais].mean().tolist()
-
-        # 📌 Calcul des moyennes des autres établissements (exclure l'établissement sélectionné)
-        df_autres_etabs = df_niveau[df_niveau["Nom d'établissement"] != etablissement_selectionne]
-
-        if df_autres_etabs.empty:
-            moyenne_autres_maths = [0] * len(competences_maths)
-            moyenne_autres_francais = [0] * len(competences_francais)
-        else:
-            moyenne_autres_maths = df_autres_etabs[competences_maths].mean().tolist()
-            moyenne_autres_francais = df_autres_etabs[competences_francais].mean().tolist()
-
-        # 📌 Construction des DataFrames pour Plotly Express
-        df_maths = pd.DataFrame({
-            "r": etab_maths_scores + moyenne_autres_maths,
-            "theta": competences_maths_renamed * 2,  # ✅ Renommage appliqué
-            "Source": [etablissement_selectionne] * len(competences_maths) + ["Moyenne autres établissements"] * len(competences_maths)
-        })
-
-        df_francais = pd.DataFrame({
-            "r": etab_francais_scores + moyenne_autres_francais,
-            "theta": competences_francais_renamed * 2,  # ✅ Renommage appliqué
-            "Source": [etablissement_selectionne] * len(competences_francais) + ["Moyenne autres établissements"] * len(competences_francais)
-        })
-
-        # 📌 Création des radars avec `plotly.express`
-        fig_maths = px.line_polar(df_maths, r='r', theta='theta', color='Source', line_close=True)
-        fig_maths.update_traces(fill='toself',line=dict(color=px.colors.qualitative.G10[0]))
-        fig_maths.update_layout(
-            title="📊 Compétences en Maths",
-            height=350,
-            legend=dict(
-            orientation="h",  # Légende horizontale
+def evolution_moyenne_par_etablissement(dataframes, competences_matiere, etablissement_selectionne):
+    """
+    Crée un graphique en ligne montrant l'évolution des moyennes en Français et en Maths
+    pour un établissement sélectionné au cours des différents niveaux.
+
+    :param dataframes: Dictionnaire contenant les DataFrames des niveaux scolaires.
+    :param competences_matiere: Dictionnaire associant chaque compétence à une matière.
+    :param etablissement_selectionne: Nom de l'établissement sélectionné.
+    :return: Figure Plotly.
+    """
+
+    # 📌 Liste des niveaux dans l'ordre
+    niveaux = ["cp", "ce1", "ce2", "cm1", "cm2", "6e", "4e", "2nde"]
+    niveau_labels = {
+        "cp": "CP", "ce1": "CE1", "ce2": "CE2", "cm1": "CM1", "cm2": "CM2",
+        "6e": "6e", "4e": "4e", "2nde": "2nde"
+    }
+
+    # 📌 Initialisation d'un dictionnaire pour stocker les moyennes
+    moyenne_etablissement = {"Niveau": [], "Matière": [], "Moyenne": []}
+
+    # 📌 Parcours des niveaux et calcul des moyennes pour l'établissement sélectionné
+    for niveau in niveaux:
+        if niveau in dataframes:
+            df = dataframes[niveau]
+
+            # 📌 Filtrer uniquement l'établissement sélectionné
+            df_etablissement = df[df["Nom d'établissement"] == etablissement_selectionne]
+
+            if not df_etablissement.empty:
+                # 📊 Calcul de la moyenne en maths et français pour cet établissement
+                maths_moyenne = df_etablissement[
+                    [col for col in df_etablissement.columns if competences_matiere.get(col) == "Maths"]
+                ].mean().mean()
+
+                francais_moyenne = df_etablissement[
+                    [col for col in df_etablissement.columns if competences_matiere.get(col) == "Français"]
+                ].mean().mean()
+
+                # 📌 Ajouter les moyennes au dictionnaire
+                if not np.isnan(maths_moyenne):
+                    moyenne_etablissement["Niveau"].append(niveau_labels[niveau])
+                    moyenne_etablissement["Matière"].append("Maths")
+                    moyenne_etablissement["Moyenne"].append(maths_moyenne)
+
+                if not np.isnan(francais_moyenne):
+                    moyenne_etablissement["Niveau"].append(niveau_labels[niveau])
+                    moyenne_etablissement["Matière"].append("Français")
+                    moyenne_etablissement["Moyenne"].append(francais_moyenne)
+
+    # 📌 Création du DataFrame final
+    df_moyenne_etablissement = pd.DataFrame(moyenne_etablissement)
+
+    if df_moyenne_etablissement.empty:
+        return None  # Aucune donnée disponible pour cet établissement
+
+    # 📌 Création du graphique en ligne
+    fig = px.line(
+        df_moyenne_etablissement,
+        x="Niveau",
+        y="Moyenne",
+        markers=True,
+        color="Matière",
+        color_discrete_sequence=px.colors.qualitative.G10
+    )
+
+    # 📌 Mise en page du graphique
+    fig.update_layout(
+        title="Évolution globale maths/français",
+        height=400,
+        legend_title_text="",
+        legend=dict(
+            orientation="h",  # Affichage horizontal
             yanchor="top",
             y=-0.2,  # Position sous le graphique
             xanchor="center",
-            x=0.5  # Centrer la légende
-        ))
-
-        fig_francais = px.line_polar(df_francais, r='r', theta='theta', color='Source', line_close=True)
-        fig_francais.update_traces(fill='toself',line=dict(color=px.colors.qualitative.G10[1]))
-        fig_francais.update_layout(
-            title="📖 Compétences en Français",
-            height=350,
-            legend=dict(
-            orientation="h",
-            yanchor="top",
-            y=-0.2,
-            xanchor="center",
-            x=0.5
-        ))
-
-         # 📌 Faire en sorte que la moyenne soit une ligne non remplie
-        fig_maths.update_traces(fill=None, line=dict(color=px.colors.qualitative.G10[9]),selector=dict(name="Moyenne autres établissements"))
-        fig_francais.update_traces(fill=None, line=dict(color=px.colors.qualitative.G10[8]),selector=dict(name="Moyenne autres établissements"))
-
-
-
-        # 📌 Affichage des graphes côte à côte
-        col1, col2 = st.columns(2)
-        with col1:
-            st.plotly_chart(fig_maths)
-        with col2:
-            st.plotly_chart(fig_francais)
-
-
-    # 📌 Créer une colonne combinée "Établissement (Pays)"
-    etablissements["Etablissement_Pays"] = etablissements["Nom d'établissement"] + " (" + etablissements["Pays"] + ")"
-
-    # 📌 Récupération de la liste des établissements uniques
-    etablissements_list = etablissements["Etablissement_Pays"].unique().tolist()
-
-    # 📌 Sélecteur interactif avec autocomplétion
-    selected_etablissement = st.selectbox(
-        "🔍 Recherchez votre établissement :",
-        sorted(etablissements_list),
-        index=0
+            x=0.5  # Centre la légende horizontalement
+        ),
+        xaxis_title=None  # Supprime complètement l'axe X
     )
 
-    # 📌 Extraire uniquement le nom de l'établissement sélectionné
-    nom_etablissement_selectionne = selected_etablissement.split(" (")[0]
-
-    # 📌 Filtrer les données en fonction de l'établissement sélectionné
-    etablissement_data = etablissements[etablissements["Nom d'établissement"] == nom_etablissement_selectionne]
+    return fig
 
 
 
-    col4,col5=st.columns([1,3])
+def radar_chart_etablissement_px(df_niveau, competences_matiere, etablissement_selectionne):
+    """
+    Génère deux radar charts (Maths & Français) avec plotly.express pour comparer
+    un établissement sélectionné à la moyenne des autres établissements.
 
-    with col4:
-        # 📊 Générer le graphique d'évolution des moyennes pour l'établissement vs réseau
-        fig_comparaison = evolution_moyenne_par_etablissement(dataframes, competences_matiere, nom_etablissement_selectionne)
+    :param df_niveau: DataFrame contenant les données du niveau sélectionné.
+    :param competences_matiere: Dictionnaire associant chaque compétence à une matière.
+    :param etablissement_selectionne: Nom de l'établissement sélectionné.
+    """
 
-        if fig_comparaison:
-            st.plotly_chart(fig_comparaison)
+    # 📌 Vérifier si l'établissement a des données pour ce niveau
+    df_etab = df_niveau[df_niveau["Nom d'établissement"] == etablissement_selectionne]
+
+    if df_etab.empty:
+        st.warning(f"⚠️ Aucune donnée disponible pour {etablissement_selectionne} à ce niveau.")
+        return
+
+    # 📌 Séparer les compétences Maths et Français
+    competences_maths = [col for col in df_niveau.columns if competences_matiere.get(col) == "Maths"]
+    competences_francais = [col for col in df_niveau.columns if competences_matiere.get(col) == "Français"]
+
+    # 📌 Appliquer le renommage des compétences
+    competences_maths_renamed = [renaming_dict.get(comp, comp) for comp in competences_maths]
+    competences_francais_renamed = [renaming_dict.get(comp, comp) for comp in competences_francais]
+
+    # 📌 Calcul des scores moyens pour l'établissement sélectionné
+    etab_maths_scores = df_etab[competences_maths].mean().tolist()
+    etab_francais_scores = df_etab[competences_francais].mean().tolist()
+
+    # 📌 Calcul des moyennes des autres établissements (exclure l'établissement sélectionné)
+    df_autres_etabs = df_niveau[df_niveau["Nom d'établissement"] != etablissement_selectionne]
+
+    if df_autres_etabs.empty:
+        moyenne_autres_maths = [0] * len(competences_maths)
+        moyenne_autres_francais = [0] * len(competences_francais)
+    else:
+        moyenne_autres_maths = df_autres_etabs[competences_maths].mean().tolist()
+        moyenne_autres_francais = df_autres_etabs[competences_francais].mean().tolist()
+
+    # 📌 Construction des DataFrames pour Plotly Express
+    df_maths = pd.DataFrame({
+        "r": etab_maths_scores + moyenne_autres_maths,
+        "theta": competences_maths_renamed * 2,  # ✅ Renommage appliqué
+        "Source": [etablissement_selectionne] * len(competences_maths) + ["Moyenne autres établissements"] * len(competences_maths)
+    })
+
+    df_francais = pd.DataFrame({
+        "r": etab_francais_scores + moyenne_autres_francais,
+        "theta": competences_francais_renamed * 2,  # ✅ Renommage appliqué
+        "Source": [etablissement_selectionne] * len(competences_francais) + ["Moyenne autres établissements"] * len(competences_francais)
+    })
+
+    # 📌 Création des radars avec `plotly.express`
+    fig_maths = px.line_polar(df_maths, r='r', theta='theta', color='Source', line_close=True)
+    fig_maths.update_traces(fill='toself',line=dict(color=px.colors.qualitative.G10[0]))
+    fig_maths.update_layout(
+        title="📊 Compétences en Maths",
+        height=350,
+        legend=dict(
+        orientation="h",  # Légende horizontale
+        yanchor="top",
+        y=-0.2,  # Position sous le graphique
+        xanchor="center",
+        x=0.5  # Centrer la légende
+    ))
+
+    fig_francais = px.line_polar(df_francais, r='r', theta='theta', color='Source', line_close=True)
+    fig_francais.update_traces(fill='toself',line=dict(color=px.colors.qualitative.G10[1]))
+    fig_francais.update_layout(
+        title="📖 Compétences en Français",
+        height=350,
+        legend=dict(
+        orientation="h",
+        yanchor="top",
+        y=-0.2,
+        xanchor="center",
+        x=0.5
+    ))
+
+        # 📌 Faire en sorte que la moyenne soit une ligne non remplie
+    fig_maths.update_traces(fill=None, line=dict(color=px.colors.qualitative.G10[9]),selector=dict(name="Moyenne autres établissements"))
+    fig_francais.update_traces(fill=None, line=dict(color=px.colors.qualitative.G10[8]),selector=dict(name="Moyenne autres établissements"))
+
+
+
+    # 📌 Affichage des graphes côte à côte
+    col1, col2 = st.columns(2)
+    with col1:
+        st.plotly_chart(fig_maths)
+    with col2:
+        st.plotly_chart(fig_francais)
+
+
+
+
+
+
+#############
+st.logo('logo_osui.png',size='large')
+
+st.title("Évaluations Nationales 2024 - 2025")
+st.subheader('Présentation des résultats des établissements de la Mission Laique Française')
+
+st.divider()
+
+
+# Domaine autorisé pour l'authentification
+DOMAINE_AUTORISE = "@mlfmonde.org"
+
+# Mot de passe commun (à sécuriser dans secrets.toml)
+MOT_DE_PASSE_COMMUN = st.secrets["mot_de_passe_commun"]
+
+
+# Fonction pour hacher le mot de passe
+def hacher_mot_de_passe(mot_de_passe):
+    return hashlib.sha256(mot_de_passe.encode()).hexdigest()
+
+# Initialiser la variable de session pour l'état de connexion
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+
+
+def login():
+    st.write("**Connexion à l'application**")
+    email = st.text_input("Adresse e-mail")
+    mot_de_passe = st.text_input("Mot de passe", type="password")
+
+    if st.button("Se connecter"):
+        if email.endswith(DOMAINE_AUTORISE) and hacher_mot_de_passe(mot_de_passe) == hacher_mot_de_passe(MOT_DE_PASSE_COMMUN):
+            st.session_state.logged_in = True
+            st.session_state.email = email
+            st.success("Connexion réussie ! Utilisez le menu pour naviguer.")
+            st.rerun()
         else:
-            st.warning("⚠️ Aucune donnée disponible pour cet établissement.")
+            st.error("Adresse e-mail ou mot de passe incorrect.")
 
-    with col5:
-        tab10,tab11,tab12,tab13,tab14,tab15,tab16,tab17=st.tabs(['CP','CE1','CE2','CM1', 'CM2', '6E','4E','2NDE'])
+# Vérification de l'état de connexion
+if not st.session_state.logged_in:
+    login()
+else :
 
-        with tab10:
-            radar_chart_etablissement_px(dataframes['cp'], competences_matiere, nom_etablissement_selectionne)
-        with tab11 :
-            radar_chart_etablissement_px(dataframes['ce1'], competences_matiere, nom_etablissement_selectionne)
-        with tab12:
-            radar_chart_etablissement_px(dataframes['ce2'], competences_matiere, nom_etablissement_selectionne)
-        with tab13:
-            radar_chart_etablissement_px(dataframes['cm1'], competences_matiere, nom_etablissement_selectionne)
-        with tab14:
-            radar_chart_etablissement_px(dataframes['cm2'], competences_matiere, nom_etablissement_selectionne)
-        with tab15 :
-            radar_chart_etablissement_px(dataframes['6e'], competences_matiere, nom_etablissement_selectionne)
-        with tab16:
-            radar_chart_etablissement_px(dataframes['4e'], competences_matiere, nom_etablissement_selectionne)
-        with tab17:
-            radar_chart_etablissement_px(dataframes['2nde'], competences_matiere, nom_etablissement_selectionne)
+
+
+#############
+
+    tab1, tab7 = st.tabs(["**RESULTATS RÉSEAU**", "**RESULTATS PAR ÉTABLISSEMENT**"])
+
+
+    with tab1:
+        a, b = st.columns(2)
+        a.metric(label="Moyenne en mathématiques", value=f"{moyenne_maths:.2f}%",border=True)
+        b.metric(label="Moyenne en Français", value=f"{moyenne_francais:.2f}%",border=True)
+
+
+        st.markdown('**Primaire / Secondaire : moyenne et répartition géographique des résultats**')
+        col1, col2=st.columns([1,2])
+
+        with col1:
+            # Génération et Affichagedu graphique
+            st.plotly_chart(creer_bar_chart_maths_francais(moyenne_maths_primaire,moyenne_francais_primaire,moyenne_maths_secondaire,moyenne_francais_secondaire))
+
+        with col2 :
+            tab1, tab2= st.tabs(["Primaire", 'Secondaire'])
+            etablissements=jitter_coordinates(etablissements,jitter=0.001)
+            tab1.plotly_chart(carte_etablissements(etablissements, 'Primaire', titre='Primaire'))
+            tab2.plotly_chart(carte_etablissements(etablissements, 'Secondaire', titre='Secondaire'))
+
+
+
+
+
+        col1,col2=st.columns(2)
+
+        with col1:
+            c, d = st.columns(2)
+            with c:
+                st.markdown("**Dispersion par niveaux**")
+            with d:
+                with st.popover('Interpretation'):
+                    st.markdown("""
+                    Ce graphique illustre la répartition des résultats en mathématiques et en français (%) selon les niveaux scolaires, avec un boxplot par matière.
+
+                    - Les médianes en maths et en français diminuent légèrement entre le primaire et le secondaire, traduisant une évolution des performances au fil des années.
+                    - Les écarts de scores sont plus marqués en français, notamment au CM1 et en 2nde, ce qui reflète une plus grande variabilité des résultats dans cette matière.
+                    - Certains scores en français dépassent 100%, indiquant que les élèves ont franchi les seuils d’évaluation en fluence.
+                    """)
+
+
+            st.plotly_chart(creer_boxplot_combine(dataframes))
+
+        with col2 :
+            e, f = st.columns(2)
+            with e:
+                st.markdown("**Corrélation maths/français**")
+            with f:
+                with st.popover('Interpretation'):
+                    st.markdown("""Ce graphique représente la relation entre la moyenne en mathématiques et la moyenne en français (%) pour tous les établissements du réseau, chaque point correspondant à un établissement.
+
+                    - La ligne de tendance suggère une corrélation positive entre les performances en mathématiques et en français : les élèves obtenant de bons résultats en maths ont tendance à réussir également en français.
+                    - La taille des bulles indique l'écart entre les deux moyennes : une grande bulle signifie une différence marquée entre les notes en mathématiques et en français, tandis qu'une petite bulle indique un équilibre entre les deux matières.
+                    """)
+
+            st.plotly_chart(creer_scatter_maths_francais(dataframes))
+
+
+
+
+        col1, col2, col3=st.columns(3)
+
+        with col1 :
+            st.markdown('**Évolution globale**')
+            st.plotly_chart(evolution_moyenne_globale_par_niveau(dataframes, competences_matiere))
+
+        with col2:
+            st.markdown('**Évolution par compétences : Français**')
+            tab3,tab4=st.tabs(['Primaire','Secondaire'])
+            tab3.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_fr_primaire))
+            tab4.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_fr_secondaire))
+
+        with col3:
+            st.markdown('**Évolution par compétences : Mathématiques**')
+            tab5,tab6=st.tabs(['Primaire','Secondaire'])
+            tab5.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_maths_primaire))
+            tab6.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_maths_secondaire))
+
+
+    with tab7:
+        # 📌 Créer une colonne combinée "Établissement (Pays)"
+        etablissements["Etablissement_Pays"] = etablissements["Nom d'établissement"] + " (" + etablissements["Pays"] + ")"
+
+        # 📌 Récupération de la liste des établissements uniques
+        etablissements_list = etablissements["Etablissement_Pays"].unique().tolist()
+
+        # 📌 Sélecteur interactif avec autocomplétion
+        selected_etablissement = st.selectbox(
+            "🔍 Recherchez votre établissement :",
+            sorted(etablissements_list),
+            index=0
+        )
+
+        # 📌 Extraire uniquement le nom de l'établissement sélectionné
+        nom_etablissement_selectionne = selected_etablissement.split(" (")[0]
+
+        # 📌 Filtrer les données en fonction de l'établissement sélectionné
+        etablissement_data = etablissements[etablissements["Nom d'établissement"] == nom_etablissement_selectionne]
+
+
+
+
+        col4,col5=st.columns([1,3])
+
+        with col4:
+            # 📊 Générer le graphique d'évolution des moyennes pour l'établissement vs réseau
+            fig_comparaison = evolution_moyenne_par_etablissement(dataframes, competences_matiere, nom_etablissement_selectionne)
+
+            if fig_comparaison:
+                st.plotly_chart(fig_comparaison)
+            else:
+                st.warning("⚠️ Aucune donnée disponible pour cet établissement.")
+
+        with col5:
+            tab10,tab11,tab12,tab13,tab14,tab15,tab16,tab17=st.tabs(['CP','CE1','CE2','CM1', 'CM2', '6E','4E','2NDE'])
+
+            with tab10:
+                radar_chart_etablissement_px(dataframes['cp'], competences_matiere, nom_etablissement_selectionne)
+            with tab11 :
+                radar_chart_etablissement_px(dataframes['ce1'], competences_matiere, nom_etablissement_selectionne)
+            with tab12:
+                radar_chart_etablissement_px(dataframes['ce2'], competences_matiere, nom_etablissement_selectionne)
+            with tab13:
+                radar_chart_etablissement_px(dataframes['cm1'], competences_matiere, nom_etablissement_selectionne)
+            with tab14:
+                radar_chart_etablissement_px(dataframes['cm2'], competences_matiere, nom_etablissement_selectionne)
+            with tab15 :
+                radar_chart_etablissement_px(dataframes['6e'], competences_matiere, nom_etablissement_selectionne)
+            with tab16:
+                radar_chart_etablissement_px(dataframes['4e'], competences_matiere, nom_etablissement_selectionne)
+            with tab17:
+                radar_chart_etablissement_px(dataframes['2nde'], competences_matiere, nom_etablissement_selectionne)
