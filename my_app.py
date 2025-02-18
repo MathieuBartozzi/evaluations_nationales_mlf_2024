@@ -6,6 +6,19 @@ import statsmodels.api as sm
 import numpy as np
 import hashlib
 
+# 📌 OpenAI SDK pour appeler l'API
+from openai import OpenAI
+
+# 📌 PandasAI pour interroger les DataFrames
+from pandasai import SmartDataframe
+from pandasai.llm.openai import OpenAI as PandasAI_OpenAI
+
+# 📌 LlamaIndex pour interroger tes données
+from llama_index.core import VectorStoreIndex, ServiceContext, Document
+
+import json
+
+
 st.set_page_config(layout="wide")
 
 
@@ -33,7 +46,6 @@ sheets = {
 }
 
 
-
 @st.cache_data
 def load_sheet(file_id, gid):
     """Charge un onglet spécifique depuis Google Sheets et détecte les lignes supprimées."""
@@ -54,7 +66,7 @@ def load_sheet(file_id, gid):
 
 
 # Colonnes à conserver en string
-STRING_COLUMNS = ["Nom d'établissement", "Pays", "Ville", "Statut MLF"]
+STRING_COLUMNS = ["Nom d'établissement", "Pays", "Ville", "Statut Mlfmonde"]
 
 
 def find_conversion_errors(df):
@@ -972,7 +984,7 @@ else :
 
 #############
 
-    tab1, tab7 = st.tabs(["**RESULTATS RÉSEAU**", "**RESULTATS PAR ÉTABLISSEMENT**"])
+    tab1, tab7, tab8= st.tabs(["**🌍 RESULTATS RÉSEAU**", "**📍 RESULTATS PAR ÉTABLISSEMENT**","**🔍 MÉTHODOLOGIE**"])
 
 
     with tab1:
@@ -1108,3 +1120,270 @@ else :
                 radar_chart_etablissement_px(dataframes['4e'], competences_matiere, nom_etablissement_selectionne)
             with tab17:
                 radar_chart_etablissement_px(dataframes['2nde'], competences_matiere, nom_etablissement_selectionne)
+
+    with tab8:
+
+
+        st.markdown("""
+
+Les données des évaluations nationales dans le primaire ont pas été remontées de manière différentes d'une zone à l'autre, chaque référentiel présentant des différences dans la sélection et la formulation des compétences évaluées. Afin d’assurer une lisibilité homogène des résultats pour les établissements du réseau Mlfmonde, nous avons procédé à un arbitrage méthodique.
+
+#### Méthode d’arbitrage
+
+Dans cet arbitrage, nous avons **mis en correspondance les compétences** entre chaque référentiel :
+- Parfois en établissant des équivalences **une à une**.
+- Parfois en **regroupant plusieurs compétences** pour en former une seule plus cohérente.
+
+Concernant la **fluence**, nous avons appliqué une règle de conversion permettant de comparer les résultats entre niveaux. Le score de fluence a été exprimé en pourcentage du seuil attendu pour chaque niveau scolaire :
+
+| Niveau | Seuil attendu (mots/min) |
+|--------|--------------------------|
+| CP     | 50                       |
+| CE1    | 70                       |
+| CE2    | 90                       |
+| CM1    | 110                      |
+| CM2    | 120                      |
+| 6e     | 130                      |
+
+Ainsi, le pourcentage de fluence d'un niveau est calculé en rapportant le nombre moyen de mots lus au seuil attendu pour son niveau.
+Par exemple, en CE1 un score moyen de **56 mots/min** donne un score de **80%** (`56/70 × 100`).
+Si le nombre de mots lus dépasse le seuil, le pourcentage obtenu sera **supérieur à 100%**.
+
+**Cas du second degré**
+
+Contrairement au primaire, les compétences évaluées dans le second degré ne présentent pas de disparités entre les zones. Elles sont uniformes pour chaque niveau, ce qui permet une comparaison directe entre les établissements du réseau Mlfmonde.
+
+
+
+---
+#### Exemples d’arbitrages effectués (primaire uniquement)
+
+
+- La compétence du référentiel 1 *"Passer de l’oral à l’écrit. S’initier à l’orthographe lexicale"* a été associée à la celle du référentiel 2 *"Écrire des mots dictés"*.
+
+- La compétence du référentiel 1 *"Calculer avec des nombres entiers"*, a été associée à trois compétenes agrégées du référentiel 2  en prenant la moyenne des résultats obtenus de *"Mémoriser des faits numériques : Évaluer la maîtrise des tables de multiplication jusqu’à 9*", de
+*"Mémoriser des procédures"* et *"Poser des calculer"*.
+
+
+
+---
+#### Accès aux tableaux détaillés
+
+Les tableaux détaillés, présentant l’ensemble des correspondances et des regroupements effectués, sont consultables ci-dessous.
+
+                    """)
+
+
+
+                # Liste des niveaux scolaires
+        tabs = ["CP ", "CE1", "CE2", "CM1", "CM2", "6E ", "4E ", "2DE"]
+
+        competences = {
+            "CP ": """
+        | Compétences                              | Référentiel 1                                                                 | Référentiel 2                                         |
+        |------------------------------------------|----------------------------------------------------------------------------|--------------------------------------------------|
+        | Comprendre un texte lu par l’enseignant(e) | Comprendre un texte lu par l’enseignant(e). (Repérer et mémoriser des informations importantes. Les relier entre elles pour leur donner du sens.) | Compréhension orale : Comprendre un texte lu par l'adulte |
+        | Comprendre des mots lus par l’enseignant(e) | Comprendre des mots lus par l’enseignant(e). (Mémoriser le vocabulaire entendu dans les textes.) | Compréhension orale : Comprendre des mots donnés par l'adulte |
+        | Comprendre des phrases lues par l’enseignant(e) | Comprendre des phrases lues par l’enseignant(e). (Mémoriser le vocabulaire entendu dans les textes.) | Compréhension orale : Comprendre des phrases lues par l'adulte |
+        | Reconnaitre des lettres                 | Reconnaitre des lettres. (Savoir discriminer de manière visuelle et connaître le nom des lettres.) | Moyenne de <br> : 1. Reconnaître des lettres dans une suite de lettres 2. Connaître le nom des lettres et le son qu’elles produisent |
+        | Discriminer des sons                    | Discriminier des sons (Savoir discriminer de manière auditive et savoir analyser les constituants des mots.) | 1. Phonologie : Manipuler les phonèmes 2. Phonologie : Manipuler les syllabes |
+        | Lire des nombres                         | Lire des nombres entiers jusqu’à 10. (Utiliser diverses représentations des nombres.) | Lire des nombres entiers (Reconnaître des nombres dictés). |
+        | Résoudre des problèmes                   | Résoudre des problèmes relevant de structures additives (addition/soustraction).(Résoudre des problèmes […] conduisant à utiliser les quatre opérations.) | Résoudre des problèmes |
+        | Quantifier et dénombrer                  | Quantifier des collections jusqu’à 10 au moins. (Dénombrer, constituer et comparer des collections en les organisant […]) | Dénombrer une collection jusqu'à 10 et l'associer à un chiffre |
+        | Comparer des nombres                     | Comparer des nombres. (Dénombrer, constituer et comparer des collections en les organisant […]) | Comparer des nombres |
+        | Reproduire un assemblage                 | Reproduire un assemblage. (Reproduire […] des assemblages de figures planes.) | Reproduire des assemblages |
+        | Écrire des nombres en entier             | Écrire des nombres entiers. (Utiliser diverses représentations des nombres.) | Écrire des nombres sous la dictée |
+        | Placer un nombre sur une ligne numérique | Associer un nombre entier à une position. (Associer un nombre entier à une position […] ainsi qu’à la distance de ce point à l’origine.) | Placer un nombre sur une ligne numérique |
+        """,
+            "CE1": """
+        | Compétences                                  | Référentiel 1                                                                                             | Référentiel 2                                                                                  |
+        |----------------------------------------------|----------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
+        | Comprendre un texte lu seul(e)              | Comprendre un texte lu seul(e). (Savoir mobiliser la compétence de décodage.)                           | Comprendre un texte lu seul-e                                                               |
+        | Comprendre des mots et des phrases lus par l’enseignant(e) | Comprendre des mots et des phrases lus par l’enseignant(e). (Mémoriser le vocabulaire entendu dans les textes.) | Moyenne de : <br> 1. Compréhension orale: Comprendre des mots lus par l'adulte.<br> 2. Compréhension orale : Comprendre des phrases lues par l'adulte |
+        | Comprendre des phrases lues seul(e)         | Comprendre des phrases lues seul(e). (Savoir mobiliser la compétence de décodage.)                       | Comprendre des phrases lues seul-e                                                         |
+        | Écrire des syllabes dictées                 | Établir les correspondances graphophonologiques : écrire des syllabes simples et complexes et des mots. (Connaître les correspondances graphophonologiques.) | Moyenne de : <br> 1. De l'oral à l'écrit: écrire des syllabes dictées <br> 2. De l'oral à l'écrit: écrire des mots dictés |
+        | Lire                                        | Moyenne de : <br> 1. Lire à voix haute des mots et un texte. (Savoir décoder et comprendre un texte.)<br> 2. % de réussite du score brut en fluence (seuil 70) | Moyenne de : <br> 1. % de réussite du Nombre de mots lus à voix haute dans un texte en 1 minute (seuil 70) <br> 2. % de réussite du Nombre de mots lus à voix haute en 1 min (seuil 70) |
+        | Reconnaitre des nombres                     | Lire des nombres entiers. (Utiliser diverses représentations des nombres.)                               | Reconnaitre des nombres sous la dictée                                                    |
+        | Résoudre des problèmes                      | Résoudre des problèmes relevant de structures additives (addition/soustraction). (Résoudre des problèmes […] conduisant à utiliser les quatre opérations.) | Résoudre des problèmes                                                                    |
+        | Calculer en ligne                           | Calculer en ligne avec des nombres entiers (additions et soustractions). (Traiter à l’oral et à l’écrit des calculs relevant des quatre opérations.) | Réaliser des calculs en ligne                                                            |
+        | Calculer mentalement                        | Calculer mentalement avec des nombres entiers. (Traiter à l’oral et à l’écrit des calculs relevant des quatre opérations.) | Calculer mentalement                                                                     |
+        | Écrire des nombres                          | Écrire des nombres entiers. (Utiliser diverses représentations des nombres.)                            | Écrire des nombres sous la dictée                                                        |
+        | Placer un nombre sur une ligne numérique    | Associer un nombre entier à une position. (Associer un nombre entier à une position […] ainsi qu’à la distance de ce point à l’origine.) | Placer un nombre sur une ligne numérique                                                 |
+        | Reproduire des assemblages                  | Reproduire un assemblage. (Reproduire […] des assemblages de figures planes.)                          | Reproduire des assemblages                                                               |
+        """,
+        "CE2":"""
+        | Compétences                                  | Référentiel 1                                                                                             | Référentiel 2                                                                                  |
+        |----------------------------------------------|----------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
+        | Comprendre un texte lu par l’enseignant(e)  | Écouter pour comprendre [des messages oraux] des phrases et un texte lus par un adulte                   | Moyenne de : <br> 1. Comprendre un texte à l’oral. (texte lu par l’enseignant(e))<br> 2. Comprendre des phrases à l’oral. (phrases lues par l’enseignant(e)) |
+        | Comprendre un texte lu seul                 | Comprendre un texte et contrôler sa compréhension (phrases et texte lus seul)                            | Moyenne de : <br> 1. Comprendre un texte lu seul(e)<br> 2. Comprendre des phrases lues seul(e). (lecture silencieuse) |
+        | Lire                                        | Moyenne de : <br> 1. Lire à voix haute<br> 2. % de réussite du score brut en fluence (seuil 90)          | % de réussite du score brut en fluence (seuil 90)                                           |
+        | Écrire des mots dictés                      | Passer de l’oral à l’écrit. S’initier à l’orthographe lexicale                                            | Écrire des mots dictés                                                                       |
+        | Maîtriser l’orthographe grammaticale        | Maîtriser l’orthographe grammaticale de base                                                             | Moyenne de : <br> 1. Mémoriser des temps de conjugaison <br> 2. Utiliser des marques d’accord pour les noms et adjectifs |
+        | Se repérer dans la phrase                   | Se repérer dans la phrase simple                                                                         | Moyenne de : <br> 1. Reconnaître les principaux constituants de la phrase <br> 2. Différencier les principales classes de mots |
+        | Résoudre des problèmes                      | Résoudre des problèmes en utilisant des nombres entiers et le calcul                                     | Résoudre des problèmes                                                                      |
+        | Nommer, lire, écrire, représenter des nombres entiers | Nommer, lire, écrire, représenter des nombres entiers                                          | Moyenne de : <br> 1. Écrire des nombres entiers (sous la dictée). <br> 2. Lire des nombres entiers (reconnaître des nombres dictés) <br> 3. Reconnaître un nombre entier à partir de sa décomposition additive. |
+        | Calculer avec des nombres entiers           | Calculer avec des nombres entiers                                                                       | Moyenne de : <br> 1. Poser et calculer. <br> 2. Mémoriser des faits numériques. <br> 3. Mémoriser des procédures. |
+        | Ordonner des nombres                        | Comprendre et utiliser des nombres entiers pour ordonner                                                 | Moyenne de : <br> 1. Ordonner des nombres. <br> 2. Placer des nombres sur une ligne graduée. |
+        """,
+
+        "CM1":"""
+        | Compétences                                  | Référentiel 1                                                                                             | Référentiel 2                                                                                  |
+        |----------------------------------------------|----------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
+        | Comprendre des textes à l'oral              | Écouter pour comprendre [des messages oraux] des textes lus par un adulte                                | Comprendre des textes à l’oral (textes lus par l’enseignant(e))                              |
+        | Comprendre un texte lu seul(e)              | Comprendre un texte et contrôler sa compréhension                                                        | Comprendre un texte lu seul(e) (lecture silencieuse)                                         |
+        | Lire à voix haute                           | Moyenne de : <br> 1. Lire à voix haute <br> 2. % de réussite du score brut en fluence (seuil 110)        | % de réussite du score brut en fluence (seuil 110)                                          |
+        | Écrire des mots dictés                      | Passer de l’oral à l’écrit. S’initier à l’orthographe lexicale                                           | Écrire des mots (dictés)                                                                    |
+        | Maîtriser l’orthographe grammaticale        | Maîtriser l’orthographe grammaticale de base                                                             | Moyenne de : <br> 1. Utiliser des marques d’accord pour les noms et adjectifs <br> 2. Mémoriser des temps de conjugaison |
+        | Se repérer dans la phrase simple            | Se repérer dans la phrase simple                                                                         | Moyenne de : <br> 1. Identifier la relation sujet-verbe <br> 2. Différencier les principales classes de mots <br> 3. Reconnaître les principaux constituants de la phrase |
+        | Construire le lexique                       | Construire le lexique                                                                                     | Moyenne de : <br> 1. Savoir trouver des synonymes <br> 2. Savoir trouver des mots de la même famille |
+        | Résoudre des problèmes                      | Résoudre des problèmes en utilisant des nombres entiers et le calcul                                     | Résoudre des problèmes                                                                      |
+        | Nommer, lire, écrire, représenter des nombres entiers | Nommer, lire, écrire, représenter des nombres entiers                                          | Moyenne de : <br> 1. Écrire des nombres entiers (sous la dictée) <br> 2. Placer un nombre sur une ligne graduée <br> 3. Reconnaître un nombre à partir de sa décomposition additive |
+        | Calculer avec des nombres entiers           | Calculer avec des nombres entiers                                                                       | Moyenne de : <br> 1. Mémoriser des faits numériques (les tables) <br> 2. Mémoriser des procédures <br> 3. Poser et calculer |
+
+        """,
+
+        "CM2":"""
+        | Compétence                                        | Objectif pédagogique                                                   | Indicateur d'évaluation |
+        |---------------------------------------------------|------------------------------------------------------------------------|--------------------------|
+        | Comprendre des textes à l'oral                   | Écouter pour comprendre un message oral, un propos, un discours, un texte lu | Comprendre un texte à l’oral (texte lu par l’enseignant(e)) - Global |
+        | Comprendre un texte lu seul(e)                   | Comprendre un texte littéraire, des documents et des images et les interpréter | Comprendre un texte lu seul(e) (lecture silencieuse) - Global |
+        | Écrire des mots dictés                           | Maîtriser les relations entre l'oral et l'écrit et acquérir l'orthographe lexicale | Écrire des mots (dictés) - Global |
+        | Maîtriser l’orthographe grammaticale            | Acquérir l’orthographe grammaticale | Moyenne de : <br> 1. Utiliser des marques d’accord pour les noms et adjectifs <br> 2. Maîtriser l’accord du verbe avec son sujet - Global <br> 3. Mémoriser des temps de conjugaison - Global |
+        | Se repérer dans la phrase simple                 | Identifier les constituants de la phrase simple et se repérer dans la phrase complexe | Moyenne de : <br> 1. Différencier les principales classes de mots - Global <br> 2. Reconnaître les principaux constituants de la phrase - Global |
+        | Construire le lexique                            | Enrichir le lexique | 1. Savoir trouver des synonymes - Global <br> 2. Savoir trouver des mots de la même famille - Global |
+        | Lecture                                          | Moyenne de : <br> 1. Lire avec fluidité <br> 2. % de réussite du score brut en fluence (seuil 130) | % de réussite de la lecture (seuil 130) |
+        | Résoudre des problèmes                           | Résoudre des problèmes en utilisant des nombres entiers et le calcul | Résoudre des problèmes |
+        | Nommer, lire, écrire, représenter des nombres entiers | Nommer, lire, écrire, représenter des nombres entiers | Moyenne de : <br> 1. Comparer des nombres <br> 2. Comparer des fractions à l’unité <br> 3. Lire des fractions et des nombres décimaux (Reconnaître des nombres dictés) <br> 4. Écrire des nombres entiers (sous la dictée) <br> 5. Reconnaître un nombre entier à partir de sa décomposition additive <br> 6. Utiliser les fractions simples dans le cadre de partage de grandeurs. <br> 7. Placer des grands nombres entiers sur une ligne graduée. <br> 8. Placer un nombre sur une ligne graduée (fractions et décimaux) |
+        | Calculer avec des nombres entiers                | Calculer avec des nombres entiers | Moyenne de : <br> 1. Mémoriser des faits numériques. Les tables de multiplication jusqu’à 9 <br> 2. Mémoriser des procédures <br> 3. Poser et calculer |
+
+        """,
+
+        "6E " : """
+        | **Compétences en Français**                                                | **Compétences en Mathématiques**                                          |
+        |----------------------------------------------------------------------------|---------------------------------------------------------------------------|
+        | Lire et comprendre un texte                                                | Automatismes : Mobiliser directement des procédures et des connaissances  |
+        | Comprendre le fonctionnement de la langue : Comprendre et mobiliser le lexique | Résolution de problème : Résoudre des problèmes en utilisant des nombres, des données et des grandeurs |
+        | Comprendre et s'exprimer à l'oral : Comprendre un message oral             | Espaces et géométrie : Connaître et utiliser des notions de géométrie     |
+        | Comprendre le fonctionnement de la langue : Se repérer dans une phrase et identifier sa composition | Grandeurs et mesures : Connaître des grandeurs et utiliser des mesures    |
+        | Comprendre le fonctionnement de la langue : Maîtriser l'orthographe        | Nombres et calcul : Connaître les nombres et les utiliser dans les calculs |
+
+        """,
+
+        "4E " :"""
+        | **Compétences en Français**                                                | **Compétences en Mathématiques**                                          |
+        |----------------------------------------------------------------------------|---------------------------------------------------------------------------|
+        | Lire et comprendre un texte                                                | Automatismes : Mobiliser directement des procédures et des connaissances  |
+        | Comprendre le fonctionnement de la langue : Comprendre et mobiliser le lexique | Résolution de problème : Résoudre des problèmes en utilisant des nombres, des données et des grandeurs |
+        | Comprendre et s'exprimer à l'oral : Comprendre un message oral             | Espaces et géométrie : Connaître et utiliser des notions de géométrie     |
+        | Comprendre le fonctionnement de la langue : Se repérer dans une phrase et identifier sa composition | Grandeurs et mesures : Connaître des grandeurs et utiliser des mesures    |
+        | Comprendre le fonctionnement de la langue : Maîtriser l'orthographe        | Nombres et calcul : Connaître les nombres et les utiliser dans les calculs |
+        |                                                                            | Connaître et utiliser des données et la notion de fonction                |
+        """,
+
+        "2DE": """
+
+        | **Compétences en Français**                                                | **Compétences en Mathématiques**                                          |
+        |----------------------------------------------------------------------------|---------------------------------------------------------------------------|
+        | Lire et comprendre un texte                                                | Automatismes : Mobiliser directement des procédures et des connaissances  |
+        | Comprendre le fonctionnement de la langue : Comprendre et mobiliser le lexique | Espaces et géométrie : Connaître et utiliser des notions de géométrie     |
+        | Comprendre et s'exprimer à l'oral : Comprendre un message oral             | Calcul littéral : Utiliser des expressions littérales pour traduire ou résoudre des problèmes |
+        | Comprendre le fonctionnement de la langue : Se repérer dans une phrase et identifier sa composition | Nombres et calcul : Connaître les nombres et les utiliser dans des calculs |
+        | Comprendre le fonctionnement de la langue : Maîtriser l'orthographe        | Calcul littéral : Connaître et utiliser des données et la notion de fonction |
+        """
+
+        }
+
+        # Création des colonnes
+        cols = st.columns(len(tabs))
+
+        # Affichage du popover dans chaque colonne
+        for i, col in enumerate(cols):
+            with col:
+                with st.popover(tabs[i]):
+                    niveau = tabs[i]  # Récupérer le niveau correspondant
+                    st.markdown(competences[niveau])  # Afficher les compétences
+
+        st.markdown("""
+
+                    Nous avons ensuite réalisé un travail de mise en correspondance des compétences évaluées à chaque niveau scolaire avec des **compétences générales transversales**. Cette approche permet d’assurer une continuité dans l’analyse des apprentissages, en structurant les évaluations autour d’un référentiel commun.
+                    Grâce à cette harmonisation, les compétences générales sont présentes à tous les niveaux, ce qui permet d’observer l’évolution des apprentissages dans le temps. Bien que les cohortes ne soient pas identiques d’une année à l’autre, cette structuration offre une tendance globale sur le développement des compétences des élèves à travers les cycles scolaires.
+                    Cette méthode facilite ainsi la comparaison des résultats et l’identification des axes d’amélioration, en offrant une vision plus cohérente de la progression des élèves sur plusieurs années.
+
+                    Les tableaux détaillés, présentant l’ensemble des correspondances générales et des regroupements effectués, sont consultables ci-dessous.
+
+
+                    """)
+
+        col1,col2 = st.columns(2)
+
+        with col1 :
+            with st.popover('Primaire'):
+                st.markdown("""
+                | **Catégories**                                      | **Compétences**                                   | **CP** | **CE1** | **CE2** | **CM1** | **CM2** |
+                |-----------------------------------------------------|--------------------------------------------------|------|------|------|------|------|
+                | **Comprendre un texte**                             | Comprendre un texte lu par l’enseignant(e)      | ✅ | ✅ | ✅ | ✅ |      |
+                |                                                     | Comprendre des mots lus par l’enseignant(e)     | ✅    |      |      |      |      |
+                |                                                     | Comprendre des phrases lues par l’enseignant(e) | ✅    |      |      |      |      |
+                |                                                     | Comprendre des mots et des phrases lus par l’enseignant(e) | ✅ |      |      |      |      |
+                |                                                     | Comprendre des phrases lues seul(e)            | ✅    |      |      |      |      |
+                |                                                     | Comprendre un texte lu seul(e)                 | ✅ | ✅ | ✅ | ✅ |      |
+                | **Lire et reconnaître les éléments du langage**    | Discriminer des sons                            | ✅    |      |      |      |      |
+                |                                                     | Lire                                           | ✅ | ✅ | ✅ | ✅ |      |
+                |                                                     | Se repérer dans une phrase                     | ✅ | ✅ | ✅ |      |      |
+                |                                                     | Construire son lexique                         | ✅ | ✅ |      |      |      |
+                | **Écrire et orthographier**                         | Reconnaitre des lettres                        | ✅    |      |      |      |      |
+                |                                                     | Écrire des syllabes                            | ✅    |      |      |      |      |
+                |                                                     | Écrire des mots dictés                         | ✅ | ✅ | ✅ |      |      |
+                |                                                     | Maîtriser l’orthographe grammaticale de base   | ✅ | ✅ | ✅ |      |      |
+                | **Résolution de problèmes**                         | Résoudre des problèmes                         | ✅ | ✅ | ✅ | ✅ | ✅ |
+                | **Compréhension et représentation des nombres**     | Lire des nombres                               | ✅    |      |      |      |      |
+                |                                                     | Écrire des nombres                             | ✅ | ✅ |      |      |      |
+                |                                                     | Comparer des nombres                           | ✅    |      |      |      |      |
+                |                                                     | Placer un nombre sur une ligne numérique      | ✅ | ✅ |      |      |      |
+                |                                                     | Reconnaitre des nombres                        | ✅    |      |      |      |      |
+                |                                                     | Comprendre et ordonner des nombres entiers     | ✅    |      |      |      |      |
+                |                                                     | Nommer, lire, écrire, représenter des nombres | ✅ | ✅ | ✅ |      |      |
+                | **Calcul et opérations**                            | Calculer en ligne                             | ✅    |      |      |      |      |
+                |                                                     | Calculer mentalement                          | ✅    |      |      |      |      |
+                |                                                     | Quantifier et dénombrer                       | ✅    |      |      |      |      |
+                |                                                     | Calculer                                      | ✅ | ✅ | ✅ |      |      |
+                | **Reproduire des assemblages**                      | Reproduire des assemblages                    | ✅ | ✅ |      |      |      |
+                            """)
+
+        with col2 :
+            with st.popover('Secondaire'):
+                    st.markdown("""
+            | **Catégories**                           | **Compétences**                                                           | **6e** | **4e** | **2nde** |
+            |------------------------------------------|---------------------------------------------------------------------------|------|------|------|
+            | **Comprendre un texte**                  | Lire et comprendre un texte                                              | ✅ | ✅ | ✅ |
+            |                                          | Comprendre et s'exprimer à l'oral : comprendre un message oral           | ✅ | ✅ | ✅ |
+            | **Orthographier**                        | Comprendre le fonctionnement de la langue : maîtriser l'orthographe      | ✅ | ✅ | ✅ |
+            | **Reconnaître les éléments du langage**  | Comprendre le fonctionnement de la langue : Se repérer dans une phrase et identifier sa composition | ✅ | ✅ | ✅ |
+            |                                          | Comprendre le fonctionnement de la langue : Comprendre et mobiliser le lexique | ✅ | ✅ | ✅ |
+            | **Procédures et calculs**                | Automatismes : Mobiliser directement des procédures et des connaissances | ✅ | ✅ | ✅ |
+            |                                          | Nombres et calcul : connaître les nombres et les utiliser dans les calculs | ✅ | ✅ | ✅ |
+            | **Résolution et modélisation**           | Résolution de problème : résoudre des problèmes en utilisant des nombres, des données et des grandeurs | ✅ | ✅ |    |
+            |                                          | Calcul littéral : Utiliser des expressions littérales pour traduire ou résoudre des problèmes |    | ✅ |    |
+            |                                          | Connaître et utiliser des données et la notion de fonction              | ✅ | ✅ |    |
+            | **Espace et mesures**                    | Espaces et géométrie : connaître et utiliser des notions de géométrie    | ✅ | ✅ | ✅ |
+            |                                          | Grandeurs et mesures : Connaître des grandeurs et utiliser des mesures   | ✅ | ✅ |    |
+                        """)
+
+
+
+        st.markdown("""
+            ---
+
+            #### 🔒 Stockage et de sécurisation des données
+
+
+            Les données utilisées dans l’application sont stockées dans un **Google Sheet** sécurisé hébergé sur un drive de la Mlfmonde. Elles ne sont pas stockées dans la structure de l'application : elles sont uploadées à chaque fois l’application est ouverte puis stockées temporaitment dans le cache de votre navigateur.
+
+            **Sécurisation des accès :**
+
+            - L’application récupère les informations via un lien public mais **incomplet** dans le code, empêchant toute consultation extérieure.
+            - Les identifiants d’accès sont stockés dans un **espace sécurisé** de l’application.
+            - Les données ** mise en cache** et disparaissent dès que l’application est fermée.
+            - L’accès est restreint par **identifiant et mot de passe**, avec des mesures préventives en cas de diffusion non autorisée.
+
+                        """)
