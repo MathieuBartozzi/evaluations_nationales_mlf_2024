@@ -6,18 +6,6 @@ import statsmodels.api as sm
 import numpy as np
 import hashlib
 
-# 📌 OpenAI SDK pour appeler l'API
-from openai import OpenAI
-
-# 📌 PandasAI pour interroger les DataFrames
-from pandasai import SmartDataframe
-from pandasai.llm.openai import OpenAI as PandasAI_OpenAI
-
-# 📌 LlamaIndex pour interroger tes données
-from llama_index.core import VectorStoreIndex, ServiceContext, Document
-
-import json
-
 
 st.set_page_config(layout="wide")
 
