@@ -984,7 +984,7 @@ else :
 
 #############
 
-    tab1, tab7, tab8= st.tabs(["**🌍 RESULTATS RÉSEAU**", "**📍 RESULTATS PAR ÉTABLISSEMENT**","**🔍 MÉTHODOLOGIE**"])
+    tab1, tab2, tab3= st.tabs(["**🌍 RESULTATS RÉSEAU**", "**📍 RESULTATS PAR ÉTABLISSEMENT**","**🔍 MÉTHODOLOGIE**"])
 
 
     with tab1:
@@ -1001,10 +1001,10 @@ else :
             st.plotly_chart(creer_bar_chart_maths_francais(moyenne_maths_primaire,moyenne_francais_primaire,moyenne_maths_secondaire,moyenne_francais_secondaire))
 
         with col2 :
-            tab1, tab2= st.tabs(["Primaire", 'Secondaire'])
+            tab1_1, tab1_2= st.tabs(["Primaire", 'Secondaire'])
             etablissements=jitter_coordinates(etablissements,jitter=0.001)
-            tab1.plotly_chart(carte_etablissements(etablissements, 'Primaire', titre='Primaire'))
-            tab2.plotly_chart(carte_etablissements(etablissements, 'Secondaire', titre='Secondaire'))
+            tab1_1.plotly_chart(carte_etablissements(etablissements, 'Primaire', titre='Primaire'))
+            tab1_2.plotly_chart(carte_etablissements(etablissements, 'Secondaire', titre='Secondaire'))
 
 
 
@@ -1056,18 +1056,18 @@ else :
 
         with col2:
             st.markdown('**Évolution par compétences : Français**')
-            tab3,tab4=st.tabs(['Primaire','Secondaire'])
-            tab3.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_fr_primaire))
-            tab4.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_fr_secondaire))
+            tab1_3,tab1_4=st.tabs(['Primaire','Secondaire'])
+            tab1_3.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_fr_primaire))
+            tab1_4.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_fr_secondaire))
 
         with col3:
             st.markdown('**Évolution par compétences : Mathématiques**')
-            tab5,tab6=st.tabs(['Primaire','Secondaire'])
-            tab5.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_maths_primaire))
-            tab6.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_maths_secondaire))
+            tab1_5,tab1_6=st.tabs(['Primaire','Secondaire'])
+            tab1_5.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_maths_primaire))
+            tab1_6.plotly_chart(creer_graphique_evolution_global(df_moyenne_globale_maths_secondaire))
 
 
-    with tab7:
+    with tab2:
         # 📌 Créer une colonne combinée "Établissement (Pays)"
         etablissements["Etablissement_Pays"] = etablissements["Nom d'établissement"] + " (" + etablissements["Pays"] + ")"
 
@@ -1121,7 +1121,7 @@ else :
             with tab17:
                 radar_chart_etablissement_px(dataframes['2nde'], competences_matiere, nom_etablissement_selectionne)
 
-    with tab8:
+    with tab3:
 
 
         st.markdown("""
@@ -1383,7 +1383,7 @@ Les tableaux détaillés, présentant l’ensemble des correspondances et des re
 
             - L’application récupère les informations via un lien public mais **incomplet** dans le code, empêchant toute consultation extérieure.
             - Les identifiants d’accès sont stockés dans un **espace sécurisé** de l’application.
-            - Les données ** mise en cache** et disparaissent dès que l’application est fermée.
+            - Les données **mises en cache** et disparaissent dès que l’application est fermée.
             - L’accès est restreint par **identifiant et mot de passe**, avec des mesures préventives en cas de diffusion non autorisée.
 
                         """)
