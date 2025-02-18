@@ -1116,7 +1116,7 @@ else :
 
 Les données des évaluations nationales dans le primaire ont pas été remontées de manière différentes d'une zone à l'autre, chaque référentiel présentant des différences dans la sélection et la formulation des compétences évaluées. Afin d’assurer une lisibilité homogène des résultats pour les établissements du réseau Mlfmonde, nous avons procédé à un arbitrage méthodique.
 
-#### Méthode d’arbitrage
+#### 📏 Méthode d’arbitrage
 
 Dans cet arbitrage, nous avons **mis en correspondance les compétences** entre chaque référentiel :
 - Parfois en établissant des équivalences **une à une**.
@@ -1144,7 +1144,7 @@ Contrairement au primaire, les compétences évaluées dans le second degré ne 
 
 
 ---
-#### Exemples d’arbitrages effectués (primaire uniquement)
+#### 📚 Exemples d’arbitrages effectués (primaire uniquement)
 
 
 - La compétence du référentiel 1 *"Passer de l’oral à l’écrit. S’initier à l’orthographe lexicale"* a été associée à la celle du référentiel 2 *"Écrire des mots dictés"*.
@@ -1155,7 +1155,7 @@ Contrairement au primaire, les compétences évaluées dans le second degré ne 
 
 
 ---
-#### Accès aux tableaux détaillés
+#### 📊 Accès aux tableaux détaillés
 
 Les tableaux détaillés, présentant l’ensemble des correspondances et des regroupements effectués, sont consultables ci-dessous.
 
