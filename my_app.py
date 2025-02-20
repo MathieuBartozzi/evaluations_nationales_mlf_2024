@@ -933,7 +933,7 @@ def radar_chart_etablissement_px(df_niveau, competences_matiere, etablissement_s
 
 
 #############
-st.logo('logo_osui.png',size='large')
+st.logo('logo_mlf.png',size='large')
 
 st.title("Évaluations Nationales 2024 - 2025")
 st.subheader('Présentation des résultats des établissements de la Mission Laique Française')
@@ -1134,15 +1134,15 @@ else :
 
         # Zone de texte pour le contexte local
 
-        # contexte_local = st.text_area("Ajoutez des informations spécifiques sur votre établissement (optionnel) :", "",placeholder='Ex. : Cette année, nous avons introduit une nouvelle méthode d’apprentissage de la lecture en CE1, ce qui pourrait influencer les résultats.')
-
         with st.container(border=True):
+
+            st.write("**OPptionnel** : l'IA peut prendre en compte d'autres éléments, notamment de contexte, que vous jugez utiles d'ajouter aux résultats. Deux moyens sont possibles :")
 
             input1,input2=st.columns(2)
 
             with input1:
                 contexte_local=st.text_area(
-                "Vous pouvez ajouter des informations spécifiques sur l' établissement (optionnel) :",
+                "Vous pouvez ajouter des informations spécifiques sur l'établissement :",
                     placeholder="Exemples :\n"
                                 "- Nos élèves sont majoritairement bilingues, et le français est une langue seconde pour une grande partie d’entre eux, ce qui impacte leur progression en lecture et en écriture.\n"
                                 "- Notre équipe enseignante est majoritairement composée d’enseignants en contrat local, ce qui peut générer des variations dans les méthodes pédagogiques utilisées et la maitrise du français\n"
@@ -1163,7 +1163,7 @@ else :
 
                 # Upload d'un fichier PDF en complément du contexte local
                 pdf_uploaded = st.file_uploader(
-                    "Vous pouvez téléverser un document complémentaire, 3 pages maximum (optionnel) :",
+                    "Vous pouvez téléverser un document complémentaire, 3 pages maximum :",
                     type=["pdf"]
                 )
 
@@ -1268,7 +1268,7 @@ else :
                     # Récupération de la réponse
                     rapport = response.choices[0].message.content
 
-                    st.write("C'est prêt ! Vous pouvez le consulter ci-dessous.")
+                    st.write("C'est prêt 😊 !")
                     with st.expander('**Consulter le rapport**', icon= "📄"):
                         st.write(rapport)
 
