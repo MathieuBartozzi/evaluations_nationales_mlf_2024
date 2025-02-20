@@ -99,7 +99,7 @@ def convert_column_types(df):
     df = clean_numeric_columns(df)  # Nettoyer et convertir les nombres
     return df
 
-
+st.cache_data
 def process_all_sheets(file_id, sheets):
     """Charge, convertit et vérifie tous les onglets du Google Sheets."""
     dataframes = {}
@@ -296,6 +296,7 @@ niveaux_primaire = ["cp", "ce1", "ce2", "mc1", "mc2"]
 niveaux_secondaire = ["6e", "4e", "2nde"]
 
 # Fonction pour calculer la moyenne d'une matière en fonction des compétences associées
+st.cache_data
 def calculer_moyenne_par_matiere(dataframes, competences_matiere, matiere):
     scores = []
     for niveau, df in dataframes.items():
@@ -499,6 +500,7 @@ def creer_scatter_maths_francais(dataframes):
     return fig
 
 # Fonction pour calculer la moyenne par cycle (primaire ou secondaire)
+st.cache_data
 def calculer_moyenne_cycle(dataframes, competences_matiere, matiere, niveaux):
     scores = []
     for niveau in niveaux:
@@ -667,6 +669,7 @@ def evolution_moyenne_globale_par_niveau(dataframes, competences_matiere):
 
 
 # Fonction pour calculer la moyenne par compétence principale
+st.cache_data
 def calculer_moyenne_par_competence_principale(dataframes, competences_par_niveau, niveaux):
     """
     Calcule la moyenne pour chaque compétence principale en parcourant les niveaux.
