@@ -2,7 +2,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import statsmodels.api as sm
 import numpy as np
 import hashlib
 from openai import OpenAI
