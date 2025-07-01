@@ -6,6 +6,7 @@ import numpy as np
 import hashlib
 from openai import OpenAI
 import fitz  # PyMuPDF
+import statmodels as sm
 
 
 st.set_page_config(layout="wide")
