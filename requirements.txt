@@ -4,3 +4,4 @@ plotly
 numpy
 openai
 pymupdf
+statmodels
