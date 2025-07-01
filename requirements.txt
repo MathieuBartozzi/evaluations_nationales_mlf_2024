@@ -4,5 +4,5 @@ plotly
 numpy
 openai
 pymupdf
-statsmodels
-scipy
+statsmodels>=0.14.1
+scipy>=1.13.0
